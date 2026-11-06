@@ -37,6 +37,17 @@ def _run_dir(cfg, exp):
     return cfg.path("paths", "models_dir") / exp.lower() / cfg.get(key, "run_tag", default="v2-clean-split")
 
 
+def previous_runs(cfg) -> list[dict]:
+    """Archived locked-test results of earlier model versions (artifacts/metrics/runs/<version>/)."""
+    out = []
+    for p in sorted((cfg.path("paths", "metrics_dir") / "runs").glob("*/e[1-4]_test_metrics.json")):
+        d = _load_json(p) or {}
+        m = d.get("metrics") or {}
+        out.append({"experiment_id": d.get("experiment_id"), "model_version": d.get("model_version"),
+                    "accuracy": m.get("accuracy"), "macro_f1": m.get("macro_f1"), "n_samples": d.get("n_samples")})
+    return out
+
+
 def _sel(cfg, exp):
     m = _load_json(_run_dir(cfg, exp) / "manifest.json") or {}
     e = m.get("selected_epoch")
@@ -121,6 +132,23 @@ def write_comparison(cfg, rows: list[dict]) -> str:
                          f"McNemar exact p = {sig['mcnemar_p']:.4g}.")
     else:
         lines.append("Not available: E3 and/or E4 has no completed locked test evaluation.")
+    v3 = _load_json(mdir / "v3_search_summary.json")
+    if v3:
+        lines += ["", "## v3 (Kaggle) validation-only search", "",
+                  f"GPU: {v3.get('environment', {}).get('gpu')}. Identical search for E3 and E4; test split not read.", "",
+                  "| Exp | LR search (val Macro-F1, seed 42) | Chosen LR | Seeds (val Macro-F1) | Mean ± sd | Served seed |",
+                  "|---|---|---:|---|---|---:|"]
+        for s in v3["experiments"]:
+            srch = ", ".join(f"{k}: {100 * v:.2f}%" for k, v in s["learning_rate_search"].items())
+            seeds = ", ".join(f"{k}: {100 * v:.2f}%" for k, v in s["confirm_seeds"].items())
+            lines.append(f"| {s['experiment_id']} | {srch} | {s['chosen_learning_rate']:g} | {seeds} | "
+                         f"{100 * s['val_macro_f1_mean']:.2f} ± {100 * s['val_macro_f1_sd']:.2f}% | {s['selected_seed']} |")
+    prev = previous_runs(cfg)
+    if prev:
+        lines += ["", "## Previous runs (archived, each evaluated once on the same locked test split)", "",
+                  "| Version | Test Accuracy | Test Macro-F1 |", "|---|---:|---:|"]
+        for r in prev:
+            lines.append(f"| {r['model_version']} | {_fmt(r['accuracy'], True)} | {_fmt(r['macro_f1'], True)} |")
     md = "\n".join(lines) + "\n"
     (mdir / "comparison_report.md").write_text(md, encoding="utf-8")
     return md
@@ -176,9 +204,9 @@ def error_analysis(cfg) -> dict:
         return summary
     allp = pd.concat(frames).reset_index()
     t = allp["text"].astype(str)
-    allp["hint_negation"] = t.str.contains(_NEGATION_HINT_RE)
-    allp["hint_contrast"] = t.str.contains(_CONTRAST_HINT_RE)
-    allp["hint_emoji"] = t.str.contains(_EMOJI_RE)
+    allp["hint_negation"] = t.map(lambda s: bool(_NEGATION_HINT_RE.search(s)))
+    allp["hint_contrast"] = t.map(lambda s: bool(_CONTRAST_HINT_RE.search(s)))
+    allp["hint_emoji"] = t.map(lambda s: bool(_EMOJI_RE.search(s)))
     allp["hint_code_mixing"] = t.map(_romanized_mixed_script_hint)
     allp["hint_short_text"] = t.str.split().str.len() <= 4
     allp["correct"] = allp["gold_label_id"] == allp["pred_label_id"]

@@ -234,3 +234,31 @@ def test_label_mapping_file_is_the_single_source():
     assert data == {"negative": 0, "neutral": 1, "positive": 2}
     scala = (ROOT / "spark" / "src" / "main" / "scala" / "hinglish" / "config" / "Config.scala").read_text()
     assert "configs/label_mapping.json" in scala
+
+
+# ------------------------------------------------------------------ v3 overlay / overrides
+def test_overrides_and_overlay(monkeypatch):
+    from hinglish.config import apply_overrides
+
+    raw = apply_overrides({"transformer": {"learning_rate": 2e-5}}, ["transformer.learning_rate=1e-5", "seed=43",
+                                                                    "transformer.optimizer=adamw_torch"])
+    assert raw["transformer"]["learning_rate"] == 1e-5 and raw["seed"] == 43
+    assert raw["transformer"]["optimizer"] == "adamw_torch"
+    with pytest.raises(ValueError):
+        apply_overrides({}, ["no_equals_sign"])
+    monkeypatch.setenv("HINGLISH_CONFIG_OVERLAY", "configs/kaggle_v3.yaml")
+    cfg = load_config()
+    assert cfg.get("transformer", "optimizer") == "adamw_torch"
+    assert cfg.get("transformer", "num_epochs") == 30
+    assert cfg.get("transformer", "max_seq_length") == 128      # inherited, unchanged
+    assert cfg.get("spark", "run_tag") == "v2-clean-split"      # overlay touches transformers only
+    s = cfg.get("v3_search")
+    assert s["search_seed"] in s["confirm_seeds"]
+
+
+def test_v3_search_space_is_identical_for_e3_and_e4():
+    import inspect
+    from hinglish import kaggle_v3
+
+    src = inspect.getsource(kaggle_v3.run_experiment)
+    assert "exp ==" not in src and 'exp=="E' not in src  # no per-experiment special cases

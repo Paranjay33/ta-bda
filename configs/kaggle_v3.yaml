@@ -1,0 +1,17 @@
+# v3 protocol overlay (Kaggle GPU, 16 GB). Applied with
+#   HINGLISH_CONFIG_OVERLAY=configs/kaggle_v3.yaml
+# Only the keys below differ from configs/config.yaml; everything else
+# (split, seed policy, max length, batch sizes, weight decay, warmup,
+# normalization, selection metric, calibration) is inherited unchanged.
+# Applied IDENTICALLY to E3 and E4 (matched protocol).
+transformer:
+  optimizer: adamw_torch          # full fp32 AdamW (the 4 GB laptop needed 8-bit AdamW)
+  num_epochs: 30                  # upper bound; early stopping decides
+  early_stopping_patience: 3      # on validation Macro-F1
+  run_tag: "v3-kaggle"
+
+# Validation-only search, identical for both experiments (see hinglish.kaggle_v3).
+v3_search:
+  learning_rates: [1.0e-5, 2.0e-5, 3.0e-5]
+  search_seed: 42
+  confirm_seeds: [42, 43, 44]     # the chosen learning rate is re-run with these seeds

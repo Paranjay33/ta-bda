@@ -60,3 +60,17 @@ replace it.
 One dataset (SentiMix tweets, preprocessed upstream), one split, one seed. They estimate
 in-distribution performance on held-out SentiMix tweets. They do not establish performance on
 other domains, raw (non-preprocessed) text, or new time periods.
+
+## v3 protocol (Kaggle, optional second run)
+
+`configs/kaggle_v3.yaml` + `python -m hinglish.kaggle_v3` (see `kaggle/README.md`). Identical for E3 and E4:
+full fp32 AdamW, max 30 epochs, early stopping patience 3, learning-rate search {1e-5, 2e-5, 3e-5}
+on seed 42 using **validation** Macro-F1, the chosen rate re-run with seeds 42/43/44, served model =
+best validation seed; validation mean ± sd across seeds is reported. Everything else (split, max
+length, batch sizes, warmup, weight decay, calibration) is unchanged. Kaggle never reads the test split.
+
+After `python -m hinglish.import_kaggle_v3 <zip>` (verifies split identity, weight hashes, label
+order; archives v2 results under `artifacts/metrics/runs/`), `bash scripts/evaluate_v3_locked.sh`
+evaluates the two v3 models on the locked test split **once** (it refuses to repeat). Because the
+test split was already used for v2, v3 is reported as a **second run**, next to v2, with both
+entries in `locked_test_log.jsonl`; no v3 setting was chosen using test data.

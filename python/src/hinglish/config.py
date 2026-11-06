@@ -122,10 +122,52 @@ class ProjectConfig:
         return node
 
 
-def load_config(root: Path | None = None) -> ProjectConfig:
+def _deep_merge(base: dict, over: dict) -> dict:
+    out = dict(base)
+    for k, v in (over or {}).items():
+        out[k] = _deep_merge(out[k], v) if isinstance(v, dict) and isinstance(out.get(k), dict) else v
+    return out
+
+
+def _coerce(value: str) -> Any:
+    # int/float first: PyYAML (YAML 1.1) reads "1e-5" as a STRING because it lacks a dot.
+    for cast in (int, float):
+        try:
+            return cast(value)
+        except ValueError:
+            pass
+    parsed = yaml.safe_load(value)
+    return parsed if parsed is not None else value
+
+
+def apply_overrides(raw: dict, overrides: list[str]) -> dict:
+    """Apply `section.key=value` overrides (values parsed as YAML scalars)."""
+    for item in overrides or []:
+        if "=" not in item:
+            raise ValueError(f"override must look like section.key=value, got {item!r}")
+        dotted, value = item.split("=", 1)
+        keys = dotted.strip().split(".")
+        node = raw
+        for k in keys[:-1]:
+            node = node.setdefault(k, {})
+        node[keys[-1]] = _coerce(value.strip())
+    return raw
+
+
+def load_config(root: Path | None = None, overrides: list[str] | None = None) -> ProjectConfig:
+    """Load configs/config.yaml, then (optionally) the overlay named by the
+    HINGLISH_CONFIG_OVERLAY env var (e.g. configs/kaggle_v3.yaml), then any
+    `section.key=value` overrides. Every effective value ends up in the run
+    manifest, so a run is always reproducible from its manifest."""
     root = root or find_project_root()
     with open(root / "configs" / "config.yaml", "r", encoding="utf-8") as f:
         raw = yaml.safe_load(f)
+    overlay = os.environ.get("HINGLISH_CONFIG_OVERLAY")
+    if overlay:
+        p = Path(overlay) if Path(overlay).is_absolute() else root / overlay
+        with open(p, "r", encoding="utf-8") as f:
+            raw = _deep_merge(raw, yaml.safe_load(f) or {})
+    raw = apply_overrides(raw, overrides or [])
     aliases = ((raw or {}).get("dataset") or {}).get("raw_label_aliases") or {}
     labels = load_label_mapping(root, aliases=aliases)
     return ProjectConfig(root=root, raw=raw, labels=labels)

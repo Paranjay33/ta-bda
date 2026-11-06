@@ -65,6 +65,20 @@
           (100 * sig.ci_low).toFixed(2) + ", " + (100 * sig.ci_high).toFixed(2) + "] pp (" + sig.n_bootstrap +
           " resamples); McNemar exact p = " + Number(sig.mcnemar_p).toPrecision(3) + "."
         : "E3/E4 significance test not available until both have a locked test evaluation.";
+      var extra = [];
+      if (d.v3_search && d.v3_search.experiments) {
+        extra.push("v3 training (" + (d.v3_search.gpu || "Kaggle GPU") + ", validation-only search): " +
+          d.v3_search.experiments.map(function (e) {
+            return e.experiment_id + " lr " + e.chosen_learning_rate + ", val Macro-F1 over seeds " +
+              (100 * e.val_macro_f1_mean).toFixed(2) + " ± " + (100 * e.val_macro_f1_sd).toFixed(2) + "%";
+          }).join("; ") + ".");
+      }
+      if (d.previous_runs && d.previous_runs.length) {
+        extra.push("Earlier versions on the same test split: " + d.previous_runs.map(function (r) {
+          return r.model_version + " " + pct(r.macro_f1, 2);
+        }).join(", ") + ".");
+      }
+      if (extra.length) $("significanceText").textContent += " " + extra.join(" ");
 
       var grid = $("cmGrid");
       grid.replaceChildren();

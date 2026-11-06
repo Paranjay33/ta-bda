@@ -72,3 +72,11 @@ bash scripts/run_scalability_benchmark.sh
 - re-run `prepare_data --force-new-split` after any test evaluation;
 - tune anything after looking at `*_test_metrics.json`;
 - train E3/E4 at the same time on a 4 GB GPU.
+
+## 7. Optional: v3 training on Kaggle (bigger GPU, more epochs, LR search)
+
+Step-by-step: `kaggle/README.md`. In short: `python scripts/make_kaggle_bundle.py` → upload
+`dist/hinglishsense_kaggle_bundle.zip` as a **private** Kaggle dataset → import
+`kaggle/hinglishsense_v3_train.ipynb`, GPU + Internet on → Save & Run All → download
+`hinglishsense_v3_models.zip` → `python -m hinglish.import_kaggle_v3 <zip>` →
+`bash scripts/evaluate_v3_locked.sh` → restart the app.

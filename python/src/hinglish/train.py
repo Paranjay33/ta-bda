@@ -28,6 +28,7 @@ Changes vs. the midterm version (documented in docs/EXPERIMENTS.md):
 from __future__ import annotations
 
 import argparse
+import os
 import json
 import re
 import time
@@ -53,6 +54,10 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     p.add_argument("--run-tag", default=None, help="defaults to transformer.run_tag in config.yaml")
     p.add_argument("--smoke-test", action="store_true")
     p.add_argument("--resume", action="store_true", help="resume from last checkpoint in the run dir")
+    p.add_argument("--set", dest="overrides", action="append", default=[], metavar="section.key=value",
+                   help="config override, repeatable (e.g. --set transformer.learning_rate=1e-5 --set seed=43)")
+    p.add_argument("--discard-checkpoints", action="store_true",
+                   help="delete intermediate Trainer checkpoints after training (keeps best/ + manifest)")
     p.add_argument("--final-test-eval", action="store_true",
                    help="after training, run the LOCKED test evaluation (hinglish.evaluate_locked)")
     return p.parse_args(argv)
@@ -60,7 +65,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
 
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
-    cfg = load_config()
+    cfg = load_config(overrides=args.overrides)
     labels = cfg.labels
     seed = int(cfg.get("seed", default=42))
     set_seed(seed)
@@ -120,6 +125,9 @@ def main(argv: list[str] | None = None) -> int:
         return {"accuracy": m.accuracy, "macro_f1": m.macro_f1, "weighted_f1": m.weighted_f1}
 
     run_dir = cfg.path("paths", "models_dir") / args.experiment_id.lower() / run_tag
+    if (run_dir / "manifest.json").exists() and not args.resume:
+        raise SystemExit(f"{run_dir} already holds a completed run; use a new --run-tag (runs are never "
+                         "overwritten) or --resume to continue an interrupted one.")
     run_dir.mkdir(parents=True, exist_ok=True)
     use_fp16 = bool(t_cfg.get("fp16_if_available", True)) and torch.cuda.is_available()
 
@@ -241,6 +249,8 @@ def main(argv: list[str] | None = None) -> int:
         "artifact_size_bytes": model_bytes,
         "training_runtime_seconds": timer.elapsed,
         "environment": capture_environment(cfg.root),
+        "config_overlay": os.environ.get("HINGLISH_CONFIG_OVERLAY"),
+        "config_overrides": args.overrides,
         "status": {"training": "completed", "selection": "validation_macro_f1",
                    "locked_test_evaluation": "not_run"},
         "notes": ["Model selection and calibration used the validation split only; the test split was not read."],
@@ -255,6 +265,10 @@ def main(argv: list[str] | None = None) -> int:
         with open(metrics_dir / f"{args.experiment_id.lower()}_validation_metrics.json", "w", encoding="utf-8") as f:
             json.dump({"experiment_id": args.experiment_id, "split": "validation",
                        "model_version": manifest["version"], "metrics": val_metrics}, f, indent=2)
+    if args.discard_checkpoints:
+        import shutil
+
+        shutil.rmtree(run_dir / "checkpoints", ignore_errors=True)
     print(f"[hinglish.train] {args.experiment_id} done: val macro-F1={val_metrics['macro_f1']:.4f} "
           f"(epoch {selected_epoch}), T={calib.temperature:.3f}. Manifest -> {run_dir / 'manifest.json'}")
 

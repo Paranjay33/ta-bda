@@ -252,9 +252,21 @@ def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--verify", action="store_true", help="verify existing split only; never write")
     p.add_argument("--force-new-split", action="store_true")
+    p.add_argument("--verify-files", action="store_true",
+                   help="only check data/processed/*.tsv against the frozen manifest hashes "
+                        "(no raw files needed, e.g. on Kaggle)")
     args = p.parse_args(argv)
 
     cfg = load_config()
+    if args.verify_files:
+        frozen = load_split_manifest(cfg)
+        for k in ("train", "validation", "test"):
+            f = cfg.root / frozen["splits"][k]["file"]
+            if not f.exists() or sha256_file(f) != frozen["splits"][k]["file_sha256"]:
+                print(f"[prepare_data] ERROR: {f} missing or differs from the frozen split.", file=sys.stderr)
+                return 3
+        print("[prepare_data] Frozen split files verified against split_manifest.json.")
+        return 0
     splits, manifest = build_split(cfg)
     manifest_path = cfg.root / cfg.get("dataset", "split_manifest_file")
 

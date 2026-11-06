@@ -327,7 +327,7 @@ def create_app(settings: Settings | None = None, registry: ModelRegistry | None 
         return service.analytics_summary(days)
 
     # ------------------------------------------------------------------ research artifacts
-    from hinglish.report import collect_rows  # noqa: E402  (shared with the offline report)
+    from hinglish.report import collect_rows, previous_runs  # noqa: E402  (shared with the offline report)
 
     def _read(path):
         try:
@@ -373,6 +373,14 @@ def create_app(settings: Settings | None = None, registry: ModelRegistry | None 
         return {
             "rows": rows,
             "e3_e4_significance": _read(mdir / "e3_e4_significance.json"),
+            "previous_runs": previous_runs(cfg),
+            "v3_search": (lambda v: v and {"gpu": (v.get("environment") or {}).get("gpu"),
+                                           "experiments": [{k: e[k] for k in ("experiment_id", "learning_rate_search",
+                                                                              "chosen_learning_rate", "confirm_seeds",
+                                                                              "val_macro_f1_mean", "val_macro_f1_sd",
+                                                                              "selected_seed")}
+                                                           for e in v["experiments"]]})(
+                _read(mdir / "v3_search_summary.json")),
             "error_analysis": _read(cfg.path("paths", "error_analysis_dir") / "error_summary.json"),
             "confusion_matrices": {m.upper(): ((registry.entries[m].test_metrics or {}).get("metrics") or {})
                                    .get("confusion_matrix") for m in MODEL_IDS},

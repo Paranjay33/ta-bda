@@ -51,3 +51,6 @@ artifacts/error_analysis/errors_all_models.csv
 
 # Legacy midterm prediction file contains SentiMix tweet text
 artifacts/legacy_midterm/e3_test_predictions.csv
+
+# Kaggle upload bundle contains the processed SentiMix split
+dist/
