@@ -1,0 +1,65 @@
+{
+  "experiment_id": "E3",
+  "split": "validation",
+  "model_version": "e3-v2-clean-split",
+  "metrics": {
+    "schema_version": 1,
+    "accuracy": 0.6314344543582704,
+    "macro_precision": 0.631082431072195,
+    "macro_recall": 0.6386853232954771,
+    "macro_f1": 0.634007558630878,
+    "weighted_f1": 0.6289431312604546,
+    "per_class": {
+      "negative": {
+        "precision": 0.6326086956521739,
+        "recall": 0.6830985915492958,
+        "f1": 0.6568848758465011,
+        "support": 426
+      },
+      "neutral": {
+        "precision": 0.5668016194331984,
+        "recall": 0.5118829981718465,
+        "f1": 0.5379442843419788,
+        "support": 547
+      },
+      "positive": {
+        "precision": 0.6938369781312127,
+        "recall": 0.7210743801652892,
+        "f1": 0.707193515704154,
+        "support": 484
+      }
+    },
+    "confusion_matrix": [
+      [
+        291,
+        122,
+        13
+      ],
+      [
+        126,
+        280,
+        141
+      ],
+      [
+        43,
+        92,
+        349
+      ]
+    ],
+    "labels_order": [
+      "negative",
+      "neutral",
+      "positive"
+    ],
+    "probabilistic_uncalibrated": {
+      "log_loss": 0.870104985867207,
+      "brier_multiclass": 0.5168701902230425,
+      "ece_15_bins": 0.14523725614550534
+    },
+    "probabilistic_calibrated": {
+      "log_loss": 0.8028219454111838,
+      "brier_multiclass": 0.48193718552377585,
+      "ece_15_bins": 0.03681364060583052
+    }
+  }
+}

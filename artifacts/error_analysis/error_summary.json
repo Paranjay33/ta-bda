@@ -1,0 +1,138 @@
+{
+  "E1": {
+    "n": 1457,
+    "error_rate": 0.5017158544955388,
+    "by_hint": {
+      "hint_negation": {
+        "n": 387,
+        "error_rate": 0.5607235142118863
+      },
+      "hint_contrast": {
+        "n": 62,
+        "error_rate": 0.5483870967741935
+      },
+      "hint_emoji": {
+        "n": 279,
+        "error_rate": 0.5304659498207885
+      },
+      "hint_code_mixing": {
+        "n": 736,
+        "error_rate": 0.5081521739130435
+      },
+      "hint_short_text": {
+        "n": 33,
+        "error_rate": 0.48484848484848486
+      }
+    },
+    "confusions": {
+      "negative->neutral": 141,
+      "negative->positive": 68,
+      "neutral->negative": 147,
+      "neutral->positive": 144,
+      "positive->negative": 55,
+      "positive->neutral": 176
+    }
+  },
+  "E2": {
+    "n": 1457,
+    "error_rate": 0.45024021962937544,
+    "by_hint": {
+      "hint_negation": {
+        "n": 387,
+        "error_rate": 0.48062015503875966
+      },
+      "hint_contrast": {
+        "n": 62,
+        "error_rate": 0.4193548387096774
+      },
+      "hint_emoji": {
+        "n": 279,
+        "error_rate": 0.4767025089605734
+      },
+      "hint_code_mixing": {
+        "n": 736,
+        "error_rate": 0.4565217391304348
+      },
+      "hint_short_text": {
+        "n": 33,
+        "error_rate": 0.4242424242424242
+      }
+    },
+    "confusions": {
+      "negative->neutral": 125,
+      "negative->positive": 51,
+      "neutral->negative": 136,
+      "neutral->positive": 141,
+      "positive->negative": 52,
+      "positive->neutral": 151
+    }
+  },
+  "E3": {
+    "n": 1457,
+    "error_rate": 0.35277968428277284,
+    "by_hint": {
+      "hint_negation": {
+        "n": 387,
+        "error_rate": 0.40568475452196384
+      },
+      "hint_contrast": {
+        "n": 62,
+        "error_rate": 0.3548387096774194
+      },
+      "hint_emoji": {
+        "n": 279,
+        "error_rate": 0.34050179211469533
+      },
+      "hint_code_mixing": {
+        "n": 736,
+        "error_rate": 0.3872282608695652
+      },
+      "hint_short_text": {
+        "n": 33,
+        "error_rate": 0.2727272727272727
+      }
+    },
+    "confusions": {
+      "negative->neutral": 106,
+      "negative->positive": 13,
+      "neutral->negative": 139,
+      "neutral->positive": 106,
+      "positive->negative": 38,
+      "positive->neutral": 112
+    }
+  },
+  "E4": {
+    "n": 1457,
+    "error_rate": 0.3218943033630748,
+    "by_hint": {
+      "hint_negation": {
+        "n": 387,
+        "error_rate": 0.3565891472868217
+      },
+      "hint_contrast": {
+        "n": 62,
+        "error_rate": 0.29032258064516125
+      },
+      "hint_emoji": {
+        "n": 279,
+        "error_rate": 0.3261648745519713
+      },
+      "hint_code_mixing": {
+        "n": 736,
+        "error_rate": 0.3505434782608695
+      },
+      "hint_short_text": {
+        "n": 33,
+        "error_rate": 0.2727272727272727
+      }
+    },
+    "confusions": {
+      "negative->neutral": 94,
+      "negative->positive": 10,
+      "neutral->negative": 125,
+      "neutral->positive": 116,
+      "positive->negative": 31,
+      "positive->neutral": 93
+    }
+  }
+}

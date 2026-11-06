@@ -1,0 +1,4 @@
+{"experiment_id": "E1", "model_version": "e1-v2-clean-split", "macro_f1": 0.5013150530537254, "at_unix": 1793993518.605432}
+{"experiment_id": "E2", "model_version": "e2-v2-clean-split", "macro_f1": 0.5533361990978906, "at_unix": 1793993518.9392548}
+{"experiment_id": "E3", "model_version": "e3-v2-clean-split", "macro_f1": 0.651237310258754, "at_unix": 1793993545.999239}
+{"experiment_id": "E4", "model_version": "e4-v2-clean-split", "macro_f1": 0.6810396534098752, "at_unix": 1793993552.3056133}

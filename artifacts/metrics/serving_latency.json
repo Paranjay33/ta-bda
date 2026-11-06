@@ -1,0 +1,27 @@
+{
+  "measured_at": "2026-11-07 01:13",
+  "n_per_model": 20,
+  "device": "E3/E4 CUDA (RTX 3050 Laptop), E1/E2 Spark local[2]",
+  "results": {
+    "e1": {
+      "inference_ms_median": 435.8,
+      "inference_ms_p95": 474.0,
+      "http_roundtrip_ms_median": 453.1
+    },
+    "e2": {
+      "inference_ms_median": 597.6,
+      "inference_ms_p95": 639.5,
+      "http_roundtrip_ms_median": 618.5
+    },
+    "e3": {
+      "inference_ms_median": 17.9,
+      "inference_ms_p95": 85.5,
+      "http_roundtrip_ms_median": 41.8
+    },
+    "e4": {
+      "inference_ms_median": 19.6,
+      "inference_ms_p95": 21.9,
+      "http_roundtrip_ms_median": 29.8
+    }
+  }
+}

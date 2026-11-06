@@ -1,0 +1,21 @@
+meta	1	positive
+mujhe	HIN
+yeh	HIN
+movie	ENG
+bahut	HIN
+pasand	HIN
+aayi	HIN
+!	O
+
+meta	2	negative
+this	ENG
+film	ENG
+bilkul	HIN
+bakwas	HIN
+tha	HIN
+
+meta	3	neutral
+kal	HIN
+weather	ENG
+theek	HIN
+thaa	HIN

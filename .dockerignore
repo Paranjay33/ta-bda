@@ -1,0 +1,17 @@
+.venv
+.cache
+.tmp
+.git
+**/__pycache__
+**/.pytest_cache
+artifacts
+data
+spark/target
+spark/project/target
+*.zip
+*.pptx
+*.tsv
+*.txt
+!backend/requirements.txt
+!python/requirements.txt
+.env

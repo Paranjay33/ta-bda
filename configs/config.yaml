@@ -1,0 +1,166 @@
+# =============================================================================
+# Central configuration for the Hinglish Sentiment Analysis project.
+# This file is the single non-label source of truth for paths, seeds and
+# hyperparameters. Both the Spark/Scala branch (via SnakeYAML) and the
+# Python/Transformer branch (via PyYAML) read this same file.
+#
+# The canonical label mapping lives separately in label_mapping.json and is
+# imported by both branches — do not redefine label -> id mappings anywhere
+# else in the codebase.
+# =============================================================================
+
+project:
+  name: hinglish-sentiment
+  root_env_var: HINGLISH_PROJECT_ROOT   # if unset, paths resolve relative to repo root
+
+seed: 42
+
+paths:
+  raw_data_dir: data/raw
+  processed_data_dir: data/processed
+  artifacts_dir: artifacts
+  models_dir: artifacts/models
+  metrics_dir: artifacts/metrics
+  manifests_dir: artifacts/manifests
+  predictions_dir: artifacts/predictions
+  error_analysis_dir: artifacts/error_analysis
+  scalability_dir: artifacts/scalability
+  label_mapping_file: configs/label_mapping.json
+
+dataset:
+  name: "SemEval-2020 Task 9 SentiMix Hinglish (supplied preprocessed release)"
+  # Labelled source files actually supplied in this workspace (audited 2026-11-06,
+  # see docs/INITIAL_AUDIT.md / docs/DATASET.md). Schema: no header,
+  # <uid>\t<text>\t<raw_label>. Text is ALREADY lowercased, NLTK-stopword-
+  # filtered and Porter-stemmed upstream (verified statistically).
+  labelled_sources:
+    - data/raw/sentimix_supplied/FinalTrainingOnly.tsv
+    - data/raw/sentimix_supplied/ValidationOnly.tsv
+  # Official test text without gold labels -> usable only for unlabelled batch demos.
+  unlabelled_sources:
+    - data/raw/sentimix_supplied/FinalTest.tsv
+  # Raw numeric labels in the supplied files -> canonical label names
+  # (label_mapping.json stays the only name->id source of truth).
+  raw_label_aliases:
+    "0": negative
+    "1": neutral
+    "2": positive
+  # The supplied train/validation files are NOT disjoint (1,446 validation rows
+  # are exact copies of training rows), so the supplied split failed
+  # verification. Per the documented fallback we pool, de-duplicate and make ONE
+  # deterministic stratified 80/10/10 split with seed 42. The resulting test
+  # partition is frozen in data/processed/split_manifest.json.
+  split_policy: pooled_dedup_stratified
+  split_ratios:
+    train: 0.8
+    validation: 0.1
+    test: 0.1
+  # Shared processed-data contract consumed by BOTH branches (Python + Spark).
+  processed_train_file: data/processed/train.tsv
+  processed_validation_file: data/processed/validation.tsv
+  processed_test_file: data/processed/test.tsv
+  split_manifest_file: data/processed/split_manifest.json
+  # Upstream artefact: ~44% of rows end in a literal " nan" token (a NaN
+  # concatenated by whoever produced the release). It is a data-pipeline
+  # artefact, not language, so it is stripped before normalization.
+  strip_trailing_nan_artifact: true
+  # Legacy paths kept so older scripts keep resolving (not used for training).
+  train_file: "train.txt"
+  validation_file: "validation.txt"
+  test_file: "test.txt"
+
+preprocessing:
+  # Shared, model-agnostic normalization (dataset-level contract).
+  # Model-specific tokenization happens separately per branch/checkpoint.
+  lowercase: false            # sentiment-bearing casing (e.g. shouting/emphasis) preserved by default
+  strip_html_entities: true
+  mask_urls: true             # replaced with literal token "<URL>"
+  mask_user_mentions: true    # replaced with literal token "<USER>"
+  collapse_whitespace: true
+  preserve_emoji: true
+  preserve_repeated_characters: true   # e.g. "sooooo" kept as-is (intensity signal)
+  preserve_punctuation: true
+  min_token_count: 1          # rows with fewer tokens than this are flagged invalid
+  version: "shared-norm-v1"
+  # Serving-time "dataset-style" transform. The supplied training text was
+  # lowercased + NLTK English-stopword-filtered + Porter-stemmed upstream
+  # (0 stopword occurrences in ~230k tokens; 98.6% of token mass is a Porter
+  # fixed point). Live user text must be mapped into the same space or every
+  # model sees out-of-distribution input. Applied ONLY to live/batch input,
+  # never re-applied to the already-processed training data.
+  dataset_style_transform:
+    enabled: true
+    version: "dataset-style-v1"
+    stopwords_file: configs/dataset_compat/nltk_english_stopwords.txt
+    stemmer: porter
+
+spark:
+  app_name: hinglish-spark-branch
+  master: local[*]            # override for a real cluster
+  run_tag: "v2-clean-split"   # artifacts/models/e1|e2/<run_tag>/pipeline_model
+  char_ngram_n: 3
+  word_tfidf_num_features: 20000
+  char_tfidf_num_features: 20000
+  log_level: WARN
+
+transformer:
+  max_seq_length: 128
+  train_batch_size: 16
+  eval_batch_size: 32
+  learning_rate: 2.0e-5
+  num_epochs: 5
+  weight_decay: 0.01
+  warmup_ratio: 0.06
+  early_stopping_patience: 2
+  model_selection_metric: eval_macro_f1
+  fp16_if_available: true
+  # Versioned output directory: artifacts/models/<exp>/<run_tag>/ so a new run
+  # never overwrites (or checkpoint-rotates away) the legacy midterm E3 run in
+  # artifacts/models/e3/{best,checkpoint-*}.
+  run_tag: "v2-clean-split"
+  # Both E3 and E4 have ~278M parameters (250k-token XLM-R vocabulary).
+  # fp32 weights + grads + fp32 AdamW moments (~4.4 GB) exceed the 4 GB
+  # RTX 3050 Laptop GPU, so BOTH arms use 8-bit AdamW (bitsandbytes). This is a
+  # documented, resource-driven deviation from the midterm run, applied
+  # identically to E3 and E4 so the comparison stays matched.
+  optimizer: adamw_bnb_8bit
+  save_safetensors: false
+
+experiments:
+  e1:
+    id: E1
+    description: "Word TF-IDF -> Multinomial Logistic Regression (Spark MLlib)"
+  e2:
+    id: E2
+    description: "Word + char n-gram TF-IDF -> LinearSVC in One-vs-Rest (Spark MLlib)"
+  e3:
+    id: E3
+    description: "FacebookAI/xlm-roberta-base fine-tuned (PyTorch + HF)"
+    checkpoint: "FacebookAI/xlm-roberta-base"
+  e4:
+    id: E4
+    description: "l3cube-pune/hing-roberta fine-tuned (PyTorch + HF)"
+    checkpoint: "l3cube-pune/hing-roberta"
+
+scalability:
+  scale_factors: [1, 5, 10]
+  note: "Replicated data — synthetic workload for runtime/scalability measurement only, NOT additional real observations."
+
+smoke_test:
+  enabled_via_flag: "--smoke-test"
+  max_examples: 64
+  num_epochs: 1
+  spark_master: "local[2]"
+
+serving:
+  # Backend-controlled Auto policy. E4 is preferred only when its registered
+  # artifact is loaded AND its manifest records validation-based selection.
+  preferred_model: e4
+  # Explicit, visible fallback chain for Auto (never silent: the response
+  # always carries model_requested + model_used + a warning).
+  auto_fallback: [e3, e2, e1]
+  max_text_chars: 500
+  max_batch_rows: 500
+  max_upload_mb: 10
+  transformer_device: auto        # auto | cuda | cpu
+  spark_service_url: http://127.0.0.1:8090

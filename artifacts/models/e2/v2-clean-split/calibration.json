@@ -1,0 +1,8 @@
+{
+  "method": "temperature_scaling_on_ovr_margins",
+  "temperature": 4.360095680684775,
+  "fitted_on": "validation",
+  "n_samples": 1457,
+  "val_nll_before": 1.5435482102777793,
+  "val_nll_after": 0.9839297991200625
+}

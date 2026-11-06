@@ -1,0 +1,7 @@
+scale_factor,repeat,n_rows,runtime_seconds,rows_per_second,num_partitions,num_spark_jobs,num_spark_stages,num_spark_tasks,spark_master,available_processors,jvm_max_heap_mb,is_replicated_synthetic_workload
+1,1,11654,7.6657725,1520.264265604021,1,115,116,116,local[*],16,3072,false
+1,2,11654,7.2306723,1611.7450102115677,1,115,116,116,local[*],16,3072,false
+5,1,58270,8.4730628,6877.088176426593,5,116,117,581,local[*],16,3072,true
+5,2,58270,6.6133589,8810.953840717762,5,95,96,476,local[*],16,3072,true
+10,1,116540,24.2152644,4812.666840011873,10,106,209,1265,local[*],16,3072,true
+10,2,116540,25.1265636,4638.11931688104,10,114,225,1361,local[*],16,3072,true

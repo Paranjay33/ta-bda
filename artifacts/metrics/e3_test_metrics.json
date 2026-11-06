@@ -1,0 +1,89 @@
+{
+  "experiment_id": "E3",
+  "status": "completed",
+  "split": "test",
+  "split_identity": {
+    "split_manifest_sha256": "317831cef513b63cc671720c1a9513349131fd8fb4587c769346689be0d19fd0",
+    "test_sample_ids_sha256": "ad209317610a7dbe5574b42efb0323b39bc03b1ebe247e2d73738c5b4f3bcc28",
+    "train_rows": 11654,
+    "validation_rows": 1457,
+    "test_rows": 1457,
+    "raw_source_sha256": {
+      "data/raw/sentimix_supplied/FinalTrainingOnly.tsv": "17db5205069aef2ae9d50f410cf9e63f3249af1a0fdb7889a6e7f33f36d8d8b4",
+      "data/raw/sentimix_supplied/ValidationOnly.tsv": "6204e965bc54232b13690596c800cf3870600cc229015b36222407f1bcd1bee9"
+    },
+    "preprocessing": {
+      "version": "shared-norm-v1",
+      "sha256": "2a91b897c6a61fb496064fa895081f50cf8c6563caaaba05a49117a3f6f0019a"
+    },
+    "label_mapping_sha256": "37d1487643d4a1642c1528e5f0c316243f4512a863f209bb021a5d9e2e162f97"
+  },
+  "model_version": "e3-v2-clean-split",
+  "metrics": {
+    "schema_version": 1,
+    "accuracy": 0.6472203157172272,
+    "macro_precision": 0.6507911982324986,
+    "macro_recall": 0.6542807660743463,
+    "macro_f1": 0.651237310258754,
+    "weighted_f1": 0.6466198448850008,
+    "per_class": {
+      "negative": {
+        "precision": 0.6342975206611571,
+        "recall": 0.7206572769953051,
+        "f1": 0.6747252747252748,
+        "support": 426
+      },
+      "neutral": {
+        "precision": 0.5807692307692308,
+        "recall": 0.5521023765996343,
+        "f1": 0.5660731021555764,
+        "support": 547
+      },
+      "positive": {
+        "precision": 0.7373068432671082,
+        "recall": 0.6900826446280992,
+        "f1": 0.7129135538954109,
+        "support": 484
+      }
+    },
+    "confusion_matrix": [
+      [
+        307,
+        106,
+        13
+      ],
+      [
+        139,
+        302,
+        106
+      ],
+      [
+        38,
+        112,
+        334
+      ]
+    ],
+    "labels_order": [
+      "negative",
+      "neutral",
+      "positive"
+    ]
+  },
+  "probabilistic": {
+    "uncalibrated_softmax": {
+      "log_loss": 0.8436962524209476,
+      "brier_multiclass": 0.49622037511632977,
+      "ece_15_bins": 0.12857082261560915
+    },
+    "calibrated": {
+      "log_loss": 0.7864114261603288,
+      "brier_multiclass": 0.46808245885031374,
+      "ece_15_bins": 0.03920615640207457
+    },
+    "calibration_method": "temperature_scaling"
+  },
+  "n_samples": 1457,
+  "inference_seconds_total": 3.7192218999989564,
+  "inference_rows_per_second": 391.74860741716134,
+  "evaluated_at_unix": 1793993545.764315
+}

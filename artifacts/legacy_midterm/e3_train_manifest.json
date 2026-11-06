@@ -1,0 +1,51 @@
+{
+  "experiment_id": "E3",
+  "seed": 42,
+  "dataset_identity": {
+    "train_file": "D:\\SEMESTER V\\TA-BDA\\hinglish-sentiment\\hinglish-sentiment\\train.txt",
+    "validation_file": "D:\\SEMESTER V\\TA-BDA\\hinglish-sentiment\\hinglish-sentiment\\validation.txt"
+  },
+  "model_name": "FacebookAI/xlm-roberta-base",
+  "model_revision": "FacebookAI/xlm-roberta-base",
+  "hyperparameters": {
+    "max_seq_length": 128,
+    "num_epochs": 5,
+    "train_batch_size": 16,
+    "eval_batch_size": 32,
+    "learning_rate": 2e-05,
+    "weight_decay": 0.01,
+    "smoke_test": false
+  },
+  "metrics": {
+    "validation": {
+      "eval_loss": 0.6438498497009277,
+      "eval_accuracy": 0.7402467489163055,
+      "eval_macro_f1": 0.7409958912559187,
+      "eval_weighted_f1": 0.7365925885282281,
+      "eval_runtime": 10.8294,
+      "eval_samples_per_second": 276.931,
+      "eval_steps_per_second": 8.68,
+      "epoch": 5.0
+    }
+  },
+  "runtime_seconds": 4389.984868400003,
+  "environment": {
+    "python_version": "3.12.8 (tags/v3.12.8:2dc476b, Dec  3 2024, 19:30:04) [MSC v.1942 64 bit (AMD64)]",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "git_commit": null,
+    "torch_version": "2.5.1+cu121",
+    "transformers_version": "5.17.0",
+    "datasets_version": "5.0.1",
+    "accelerate_version": "1.15.0",
+    "evaluate_version": "0.4.6",
+    "scikit-learn_version": "1.9.1",
+    "pandas_version": "3.0.5",
+    "numpy_version": "2.4.6",
+    "torch_cuda_available": true,
+    "torch_cuda_device_name": "NVIDIA GeForce RTX 3050 Laptop GPU"
+  },
+  "notes": [
+    "Model-selection metric: validation macro_f1 (never the test set)."
+  ],
+  "created_at_unix": 1789338879.240834
+}

@@ -1,0 +1,85 @@
+{
+  "experiment_id": "E2",
+  "status": "completed",
+  "split": "test",
+  "split_identity": {
+    "split_manifest_sha256": "317831cef513b63cc671720c1a9513349131fd8fb4587c769346689be0d19fd0",
+    "test_sample_ids_sha256": "ad209317610a7dbe5574b42efb0323b39bc03b1ebe247e2d73738c5b4f3bcc28",
+    "train_rows": 11654,
+    "validation_rows": 1457,
+    "test_rows": 1457,
+    "raw_source_sha256": {
+      "data/raw/sentimix_supplied/FinalTrainingOnly.tsv": "17db5205069aef2ae9d50f410cf9e63f3249af1a0fdb7889a6e7f33f36d8d8b4",
+      "data/raw/sentimix_supplied/ValidationOnly.tsv": "6204e965bc54232b13690596c800cf3870600cc229015b36222407f1bcd1bee9"
+    },
+    "preprocessing": {
+      "version": "shared-norm-v1",
+      "sha256": "2a91b897c6a61fb496064fa895081f50cf8c6563caaaba05a49117a3f6f0019a"
+    },
+    "label_mapping_sha256": "37d1487643d4a1642c1528e5f0c316243f4512a863f209bb021a5d9e2e162f97"
+  },
+  "model_version": "e2-v2-clean-split",
+  "metrics": {
+    "schema_version": 1,
+    "accuracy": 0.5497597803706246,
+    "macro_precision": 0.5531206961598806,
+    "macro_recall": 0.553678145004481,
+    "macro_f1": 0.5533361990978906,
+    "weighted_f1": 0.5497629988797038,
+    "per_class": {
+      "negative": {
+        "precision": 0.5707762557077626,
+        "recall": 0.5868544600938967,
+        "f1": 0.5787037037037037,
+        "support": 426
+      },
+      "neutral": {
+        "precision": 0.4945054945054945,
+        "recall": 0.4936014625228519,
+        "f1": 0.4940530649588289,
+        "support": 547
+      },
+      "positive": {
+        "precision": 0.5940803382663847,
+        "recall": 0.5805785123966942,
+        "f1": 0.587251828631139,
+        "support": 484
+      }
+    },
+    "confusion_matrix": [
+      [
+        250,
+        125,
+        51
+      ],
+      [
+        136,
+        270,
+        141
+      ],
+      [
+        52,
+        151,
+        281
+      ]
+    ],
+    "labels_order": [
+      "negative",
+      "neutral",
+      "positive"
+    ]
+  },
+  "probabilistic": {
+    "calibrated": {
+      "log_loss": 0.9652262152639212,
+      "brier_multiclass": 0.5720057912200317,
+      "ece_15_bins": 0.04525941613243942
+    },
+    "calibration_method": "temperature_scaling_on_ovr_margins",
+    "note": "raw OvR margins are not probabilities; metrics shown are for the calibrated map"
+  },
+  "n_samples": 1457,
+  "inference_seconds_total": null,
+  "inference_rows_per_second": null,
+  "evaluated_at_unix": 1793993518.700086
+}

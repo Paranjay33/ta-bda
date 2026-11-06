@@ -1,0 +1,129 @@
+{
+  "schema_version": 2,
+  "experiment_id": "E1",
+  "display_name": "TF-IDF + Logistic Regression (Spark MLlib)",
+  "family": "classical",
+  "framework": "scala+spark-mllib",
+  "run_tag": "v2-clean-split",
+  "version": "e1-v2-clean-split",
+  "source_checkpoint": null,
+  "seed": 42,
+  "dataset": {
+    "split_manifest_sha256": "317831cef513b63cc671720c1a9513349131fd8fb4587c769346689be0d19fd0",
+    "test_sample_ids_sha256": "ad209317610a7dbe5574b42efb0323b39bc03b1ebe247e2d73738c5b4f3bcc28",
+    "train_rows": 11654,
+    "validation_rows": 1457,
+    "test_rows": 1457,
+    "preprocessing": {
+      "version": "shared-norm-v1",
+      "sha256": "2a91b897c6a61fb496064fa895081f50cf8c6563caaaba05a49117a3f6f0019a"
+    },
+    "label_mapping_sha256": "37d1487643d4a1642c1528e5f0c316243f4512a863f209bb021a5d9e2e162f97",
+    "raw_source_sha256": {
+      "data/raw/sentimix_supplied/FinalTrainingOnly.tsv": "17db5205069aef2ae9d50f410cf9e63f3249af1a0fdb7889a6e7f33f36d8d8b4",
+      "data/raw/sentimix_supplied/ValidationOnly.tsv": "6204e965bc54232b13690596c800cf3870600cc229015b36222407f1bcd1bee9"
+    }
+  },
+  "hyperparameters": {
+    "lr_reg_param": "0.0",
+    "lr_max_iter": "100",
+    "lr_family": "multinomial",
+    "tokenizer": "RegexTokenizer(pattern=\\s+, toLowercase=false)",
+    "word_tfidf_num_features": "20000",
+    "smoke_test": false
+  },
+  "validation_metrics": {
+    "schema_version": 1,
+    "accuracy": 0.4962251201098147,
+    "macro_precision": 0.5020834181280708,
+    "macro_recall": 0.49581183800543505,
+    "macro_f1": 0.4981483544980274,
+    "weighted_f1": 0.49687244957953447,
+    "per_class": {
+      "negative": {
+        "precision": 0.5223880597014925,
+        "recall": 0.49295774647887325,
+        "f1": 0.5072463768115941,
+        "support": 426
+      },
+      "neutral": {
+        "precision": 0.4537953795379538,
+        "recall": 0.5027422303473492,
+        "f1": 0.47701647875108416,
+        "support": 547
+      },
+      "positive": {
+        "precision": 0.5300668151447662,
+        "recall": 0.49173553719008267,
+        "f1": 0.510182207931404,
+        "support": 484
+      }
+    },
+    "confusion_matrix": [
+      [
+        210,
+        147,
+        69
+      ],
+      [
+        130,
+        275,
+        142
+      ],
+      [
+        62,
+        184,
+        238
+      ]
+    ],
+    "labels_order": [
+      "negative",
+      "neutral",
+      "positive"
+    ],
+    "probabilistic_uncalibrated": {
+      "log_loss": 13.332368130168176,
+      "brier_multiclass": 1.0011894931586454,
+      "ece_15_bins": 0.5016536407567026
+    }
+  },
+  "score_semantics": "model_probability (multinomial logistic regression softmax output; not separately calibrated)",
+  "score_column": "probability",
+  "artifact_dir": "artifacts/models/e1/v2-clean-split/pipeline_model",
+  "artifact_sha256": {
+    "pipeline_model(dir)": "ec54625c40437870ef8f347c69f540f0126e581108def1f42be20efa74eeb89f"
+  },
+  "artifact_size_bytes": 649050,
+  "training_runtime_seconds": 16.1634495,
+  "validation_scoring_seconds_per_row": 0.0007257023335621139,
+  "environment": {
+    "spark_version": "3.5.1",
+    "scala_version": "version 2.12.18",
+    "java_version": "17.0.21",
+    "spark_master": "local[*]",
+    "os": "Windows 11",
+    "available_processors": 16
+  },
+  "status": {
+    "training": "completed",
+    "selection": "none (fixed configuration; validation used for reporting/calibration only)",
+    "locked_test_evaluation": "completed"
+  },
+  "notes": [
+    "Pipeline (tokenizer/vectorizer/IDF/classifier) fitted on the training split only.",
+    "Saved PipelineModel reloaded and verified to reproduce in-memory validation predictions.",
+    "Spark ran in LOCAL mode on one machine; this is not a multi-node cluster run."
+  ],
+  "created_at_unix": 1793988680.259,
+  "calibration": {
+    "method": "none",
+    "note": "Spark multinomial LR probabilities used as-is."
+  },
+  "test_metrics_summary": {
+    "accuracy": 0.4982841455044612,
+    "macro_f1": 0.5013150530537254,
+    "weighted_f1": 0.49891565402991295,
+    "macro_precision": 0.5029190538501478,
+    "macro_recall": 0.5000414189010115
+  }
+}

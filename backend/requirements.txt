@@ -1,0 +1,23 @@
+# HinglishSense API runtime (serving only). Pinned to the versions verified in
+# the project venv on 2026-11-06. torch is installed separately in the
+# Dockerfile (CPU wheel by default, CUDA wheel via build arg).
+fastapi==0.162.0
+starlette==1.10.0
+uvicorn[standard]==0.54.0
+pydantic==2.14.3
+python-multipart==0.0.33
+SQLAlchemy==2.1.8
+alembic==1.20.1
+httpx==0.28.1
+psycopg2-binary==2.9.10      # only used when DATABASE_URL is PostgreSQL
+numpy==2.4.6
+pandas==3.0.5
+scikit-learn==1.9.1
+scipy==1.18.1
+PyYAML==6.0.3
+nltk==3.10.4
+transformers==4.46.3
+tokenizers==0.20.3
+safetensors==0.8.0
+sentencepiece==0.2.2
+matplotlib==3.11.2

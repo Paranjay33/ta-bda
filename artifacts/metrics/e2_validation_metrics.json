@@ -1,0 +1,55 @@
+{
+  "experiment_id": "E2",
+  "split": "validation",
+  "model_version": "e2-v2-clean-split",
+  "metrics": {
+    "schema_version": 1,
+    "accuracy": 0.5394646533973919,
+    "macro_precision": 0.5432643626131781,
+    "macro_recall": 0.5396260365631186,
+    "macro_f1": 0.5411536007221677,
+    "weighted_f1": 0.5397623713373513,
+    "per_class": {
+      "negative": {
+        "precision": 0.5588972431077694,
+        "recall": 0.5234741784037559,
+        "f1": 0.5406060606060606,
+        "support": 426
+      },
+      "neutral": {
+        "precision": 0.4965156794425087,
+        "recall": 0.5210237659963437,
+        "f1": 0.5084745762711864,
+        "support": 547
+      },
+      "positive": {
+        "precision": 0.5743801652892562,
+        "recall": 0.5743801652892562,
+        "f1": 0.5743801652892562,
+        "support": 484
+      }
+    },
+    "confusion_matrix": [
+      [
+        223,
+        141,
+        62
+      ],
+      [
+        118,
+        285,
+        144
+      ],
+      [
+        58,
+        148,
+        278
+      ]
+    ],
+    "labels_order": [
+      "negative",
+      "neutral",
+      "positive"
+    ]
+  }
+}

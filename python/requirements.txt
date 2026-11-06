@@ -1,0 +1,27 @@
+# Research/training environment (versions verified in the project venv, 2026-11-06).
+# Install torch with the wheel matching your hardware first, e.g.
+#   pip install torch==2.5.1 --index-url https://download.pytorch.org/whl/cu121
+numpy==2.4.6
+pandas==3.0.5
+PyYAML==6.0.3
+scikit-learn==1.9.1
+scipy==1.18.1
+nltk==3.10.4                 # dataset-style serving transform (Porter + tokenizer; no corpus download)
+
+# Transformer branch (E3 / E4)
+torch==2.5.1
+transformers==4.46.3
+tokenizers==0.20.3
+datasets==5.0.1
+accelerate==1.15.0
+evaluate==0.4.6
+sentencepiece==0.2.2
+safetensors==0.8.0
+bitsandbytes==0.50.2         # 8-bit AdamW used identically by E3 and E4 on a 4 GB GPU
+
+# Reporting / manifests
+matplotlib==3.11.2
+
+# Testing
+pytest==9.1.1
+playwright==1.64.1

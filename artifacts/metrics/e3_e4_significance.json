@@ -1,0 +1,10 @@
+{
+  "n_bootstrap": 2000,
+  "seed": 42,
+  "macro_f1_diff_e4_minus_e3": 0.02980234315112118,
+  "ci_low": 0.00892867638827351,
+  "ci_high": 0.05242038303764117,
+  "mcnemar_e4_right_e3_wrong": 147,
+  "mcnemar_e3_right_e4_wrong": 102,
+  "mcnemar_p": 0.0051935159879577366
+}

@@ -1,0 +1,9 @@
+[project]
+name = "hinglish-sentiment"
+version = "0.1.0"
+description = "Hinglish Sentiment Analysis - Transformer branch (E3/E4) and shared evaluation/error-analysis utilities"
+requires-python = ">=3.10"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]

@@ -1,0 +1,14 @@
+{
+  "experiment_id": "E1",
+  "metrics": {
+    "schema_version": 1,
+    "accuracy": 0.4962251201098147,
+    "macro_precision": 0.5020834181280708,
+    "macro_recall": 0.49581183800543505,
+    "macro_f1": 0.4981483544980274,
+    "weighted_f1": 0.49687244957953447,
+    "per_class": {"negative": {"precision": 0.5223880597014925, "recall": 0.49295774647887325, "f1": 0.5072463768115941, "support": 426}, "neutral": {"precision": 0.4537953795379538, "recall": 0.5027422303473492, "f1": 0.47701647875108416, "support": 547}, "positive": {"precision": 0.5300668151447662, "recall": 0.49173553719008267, "f1": 0.510182207931404, "support": 484}},
+    "confusion_matrix": [[210, 147, 69], [130, 275, 142], [62, 184, 238]],
+    "labels_order": ["negative", "neutral", "positive"]
+  }
+}

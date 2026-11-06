@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HinglishSense — Hinglish Sentiment Analysis</title>
+<meta name="description" content="Understand what your Hinglish is saying. A research-driven sentiment analysis interface for Hindi-English code-mixed text.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 26'%3E%3Ccircle cx='13' cy='13' r='12' fill='none' stroke='%23473C8C' stroke-width='1.6'/%3E%3Cpath d='M8 13.5c1.2-3.5 3-5.2 5-5.2s3.8 1.7 5 5.2' fill='none' stroke='%23473C8C' stroke-width='1.6' stroke-linecap='round'/%3E%3Ccircle cx='13' cy='16.4' r='1.4' fill='%23473C8C'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="nav" id="nav">
+  <div class="nav__inner">
+    <a href="#top" class="nav__brand">
+      <svg class="nav__mark" width="26" height="26" viewBox="0 0 26 26" fill="none" aria-hidden="true">
+        <circle cx="13" cy="13" r="12" stroke="currentColor" stroke-width="1.4"/>
+        <path d="M8 13.5c1.2-3.5 3-5.2 5-5.2s3.8 1.7 5 5.2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+        <circle cx="13" cy="16.4" r="1.3" fill="currentColor"/>
+      </svg>
+      <span>HinglishSense</span>
+    </a>
+
+    <nav class="nav__links" aria-label="Primary">
+      <a href="#analyzer">Analyze</a>
+      <a href="#why-hinglish">Examples</a>
+      <a href="#batch">Batch</a>
+      <a href="#research">Research</a>
+      <a href="#history">History</a>
+      <a href="#models">Models</a>
+      <a href="#about">About</a>
+    </nav>
+
+    <a href="#analyzer" class="btn btn--primary btn--sm nav__cta">Try Analysis</a>
+
+    <button class="nav__toggle" id="navToggle" aria-expanded="false" aria-controls="navMobile" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+
+  <div class="nav__mobile" id="navMobile">
+    <a href="#analyzer">Analyze</a>
+    <a href="#why-hinglish">Examples</a>
+    <a href="#batch">Batch</a>
+    <a href="#research">Research</a>
+    <a href="#history">History</a>
+    <a href="#models">Models</a>
+    <a href="#about">About</a>
+    <a href="#analyzer" class="btn btn--primary btn--sm">Try Analysis</a>
+  </div>
+</header>
+
+<main id="main">
+
+  <section class="hero" id="top">
+    <p class="eyebrow">Hindi × English • Sentiment Analysis</p>
+    <h1 class="hero__title">Understand What Your Hinglish Is Saying.</h1>
+    <p class="hero__subtitle">A sentiment analysis interface built for the way people actually write — mixing Hindi and English in the same sentence, the same word, the same breath.</p>
+  </section>
+
+  <section class="analyzer" id="analyzer" aria-labelledby="analyzer-title">
+    <div class="analyzer__card">
+      <h2 class="visually-hidden" id="analyzer-title">Analyze Hinglish text</h2>
+
+      <label for="inputText" class="field-label">Your text</label>
+      <div class="textarea-wrap">
+        <textarea
+          id="inputText"
+          class="analyzer__textarea"
+          placeholder="Type or paste a Hinglish sentence — e.g. 'yeh movie bahut acchi thi yaar'"
+          maxlength="500"
+          rows="3"
+          aria-describedby="charCount"
+        ></textarea>
+        <button type="button" class="textarea-clear" id="clearBtn" aria-label="Clear text">
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true"><path d="M1 1L14 14M14 1L1 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div class="analyzer__meta">
+        <span id="charCount" class="char-count">0/500</span>
+      </div>
+
+      <div class="examples" role="group" aria-label="Try an example">
+        <span class="examples__label">Try an example</span>
+        <div class="examples__chips">
+          <button type="button" class="chip" data-text="yeh movie bahut acchi thi yaar" data-tag="positive">
+            yeh movie bahut acchi thi yaar <span class="chip__tag chip__tag--positive">Positive</span>
+          </button>
+          <button type="button" class="chip" data-text="mujhe yeh product bilkul pasand nahi aaya" data-tag="negative">
+            mujhe yeh product bilkul pasand nahi aaya <span class="chip__tag chip__tag--negative">Negative</span>
+          </button>
+          <button type="button" class="chip" data-text="kal office jaana hai, normal din hai" data-tag="neutral">
+            kal office jaana hai, normal din hai <span class="chip__tag chip__tag--neutral">Neutral</span>
+          </button>
+          <button type="button" class="chip" data-text="movie toh acchi thi but ending bakwas thi" data-tag="mixed">
+            movie toh acchi thi but ending bakwas thi <span class="chip__tag chip__tag--mixed">Contrast</span>
+          </button>
+          <button type="button" class="chip" data-text="khana bilkul accha nahi tha, kabhi mat jaana" data-tag="negative">
+            khana bilkul accha nahi tha, kabhi mat jaana <span class="chip__tag chip__tag--negative">Negation</span>
+          </button>
+          <button type="button" class="chip" data-text="achha laga yaar, bahut badhiya kaam kiya 👏👏" data-tag="positive">
+            achha laga yaar, bahut badhiya kaam kiya 👏👏 <span class="chip__tag chip__tag--positive">Spelling + emoji</span>
+          </button>
+          <button type="button" class="chip" data-text="service theek thi lekin delivery bahut late aayi!!!" data-tag="mixed">
+            service theek thi lekin delivery bahut late aayi!!! <span class="chip__tag chip__tag--mixed">lekin</span>
+          </button>
+        </div>
+        <p class="examples__note">Tags are hand-written illustrations of the phenomenon (or the expected label), not model output. Clicking an example only fills the box.</p>
+      </div>
+
+      <div class="model-select-wrap">
+        <span class="field-label" id="modelLabel">Model</span>
+        <div class="model-select" id="modelSelect">
+          <button
+            type="button"
+            class="model-select__trigger"
+            id="modelTrigger"
+            aria-haspopup="listbox"
+            aria-expanded="false"
+            aria-labelledby="modelLabel"
+          >
+            <span class="model-select__trigger-text">
+              <span class="model-select__name" id="modelTriggerName">Auto (HingRoBERTa)</span>
+              <span class="model-select__desc" id="modelTriggerDesc">Backend-selected validated model — checking availability…</span>
+            </span>
+            <svg class="model-select__chev" width="12" height="8" viewBox="0 0 12 8" fill="none" aria-hidden="true"><path d="M1 1.5L6 6.5L11 1.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <ul class="model-select__list" id="modelList" role="listbox" aria-labelledby="modelLabel" tabindex="-1" hidden>
+            <li class="model-select__option" role="option" id="opt-auto" data-value="auto" aria-selected="true">
+              <span class="model-select__option-top">
+                <span class="model-select__option-name">Auto (HingRoBERTa)</span>
+                <span class="model-select__badge model-select__badge--category">Recommended</span>
+              </span>
+              <span class="model-select__option-desc">Backend picks the preferred validated model; the result always names the model actually used</span>
+              <span class="model-select__status" data-model-status="auto">Checking…</span>
+            </li>
+            <li class="model-select__option" role="option" id="opt-e1" data-value="e1" aria-selected="false">
+              <span class="model-select__option-top">
+                <span class="model-select__option-name">E1 — TF-IDF + Logistic Regression</span>
+                <span class="model-select__badge model-select__badge--category">Classical ML</span>
+              </span>
+              <span class="model-select__option-desc">Word-frequency features with a linear classifier — fast, interpretable baseline (Spark MLlib)</span>
+              <span class="model-select__status" data-model-status="e1">Checking…</span>
+            </li>
+            <li class="model-select__option" role="option" id="opt-e2" data-value="e2" aria-selected="false">
+              <span class="model-select__option-top">
+                <span class="model-select__option-name">E2 — Word + Character Features + SVM</span>
+                <span class="model-select__badge model-select__badge--category">Classical ML</span>
+              </span>
+              <span class="model-select__option-desc">Adds character n-grams to catch spelling variation across Hinglish (Spark MLlib)</span>
+              <span class="model-select__status" data-model-status="e2">Checking…</span>
+            </li>
+            <li class="model-select__option" role="option" id="opt-e3" data-value="e3" aria-selected="false">
+              <span class="model-select__option-top">
+                <span class="model-select__option-name">E3 — XLM-R</span>
+                <span class="model-select__badge model-select__badge--category">Transformer</span>
+              </span>
+              <span class="model-select__option-desc">General-purpose multilingual transformer, fine-tuned on Hinglish sentiment</span>
+              <span class="model-select__status" data-model-status="e3">Checking…</span>
+            </li>
+            <li class="model-select__option" role="option" id="opt-e4" data-value="e4" aria-selected="false">
+              <span class="model-select__option-top">
+                <span class="model-select__option-name">E4 — HingRoBERTa</span>
+                <span class="model-select__badge model-select__badge--best" data-best-badge="e4">Domain-adapted</span>
+              </span>
+              <span class="model-select__option-desc">Transformer pre-trained specifically on Hindi-English code-mixed text</span>
+              <span class="model-select__status" data-model-status="e4">Checking…</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="analyzer__actions">
+        <button type="button" class="btn btn--primary btn--lg analyzer__submit" id="analyzeBtn">
+          <span class="btn__label">Analyze Sentiment</span> <span aria-hidden="true">→</span>
+        </button>
+        <button type="button" class="btn btn--secondary btn--lg analyzer__compare" id="compareBtn">
+          Compare E3 vs E4
+        </button>
+      </div>
+      <p class="analyzer__error" id="inputError" role="alert" hidden></p>
+    </div>
+  </section>
+
+  <section class="result" id="result" aria-labelledby="result-title">
+    <h2 class="visually-hidden" id="result-title">Result</h2>
+    <div class="result__card" id="resultCard">
+      <p class="visually-hidden" id="resultAnnounce" aria-live="polite"></p>
+
+      <div class="result__state result__state--waiting" id="stateWaiting">
+        <svg width="34" height="34" viewBox="0 0 34 34" fill="none" aria-hidden="true" class="result__waiting-icon">
+          <circle cx="17" cy="17" r="15.5" stroke="currentColor" stroke-width="1.2" stroke-dasharray="2 4"/>
+          <circle cx="17" cy="17" r="2" fill="currentColor"/>
+        </svg>
+        <p class="result__waiting-text">Waiting for your text</p>
+        <p class="result__waiting-sub">Enter a sentence above and choose Analyze Sentiment to see a result here.</p>
+      </div>
+
+      <div class="result__state result__state--loading" id="stateLoading" hidden>
+        <span class="spinner" aria-hidden="true"></span>
+        <p class="result__waiting-text" id="loadingText">Running the model…</p>
+        <p class="result__waiting-sub">The first request to a model can take a few seconds while it warms up.</p>
+      </div>
+
+      <div class="result__state result__state--error" id="stateError" hidden>
+        <p class="result__error-title" id="errorTitle">Something went wrong</p>
+        <p class="result__waiting-sub" id="errorBody"></p>
+      </div>
+
+      <div class="result__state result__state--done" id="stateDone" hidden>
+        <div class="result__top">
+          <div class="result__sentiment">
+            <span class="result__sentiment-badge" id="sentimentBadge">—</span>
+            <span class="result__confidence" id="confidenceText">—</span>
+          </div>
+          <div class="result__specs">
+            <span><span class="result__specs-label">Model</span><span id="modelUsed">—</span></span>
+            <span><span class="result__specs-label">Version</span><span id="modelVersion">—</span></span>
+            <span><span class="result__specs-label">Inference time</span><span id="processingTime">—</span></span>
+          </div>
+        </div>
+
+        <p class="result__score-type" id="scoreTypeLabel">—</p>
+        <div class="result__probs">
+          <div class="prob-row">
+            <span class="prob-row__label">Positive</span>
+            <div class="prob-row__bar"><div class="prob-row__fill prob-row__fill--positive" id="barPositive" style="width:0%"></div></div>
+            <span class="prob-row__value" id="valPositive">—</span>
+          </div>
+          <div class="prob-row">
+            <span class="prob-row__label">Neutral</span>
+            <div class="prob-row__bar"><div class="prob-row__fill prob-row__fill--neutral" id="barNeutral" style="width:0%"></div></div>
+            <span class="prob-row__value" id="valNeutral">—</span>
+          </div>
+          <div class="prob-row">
+            <span class="prob-row__label">Negative</span>
+            <div class="prob-row__bar"><div class="prob-row__fill prob-row__fill--negative" id="barNegative" style="width:0%"></div></div>
+            <span class="prob-row__value" id="valNegative">—</span>
+          </div>
+        </div>
+
+        <details class="result__details">
+          <summary>What the model actually read</summary>
+          <p class="result__details-note">Every model was trained on text that had been lowercased, stop-word filtered and Porter-stemmed before it reached this project, so your sentence is mapped into the same form first.</p>
+          <code class="result__model-input" id="modelInput">—</code>
+        </details>
+
+        <p class="result__notice" id="resultNotice">—</p>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="compare" id="compare" aria-labelledby="compare-title" hidden>
+    <div class="compare__inner">
+      <p class="section-kicker">Same sentence, two pretraining strategies</p>
+      <h2 class="section-title" id="compare-title">E3 vs E4</h2>
+      <p class="compare__agreement" id="compareAgreement" aria-live="polite"></p>
+      <div class="compare__grid" id="compareGrid"></div>
+      <p class="compare__note">One sentence cannot tell you which model is better — model-level comparison uses the locked test split in the <a href="#research">research dashboard</a>.</p>
+    </div>
+  </section>
+
+  <section class="why" id="why-hinglish">
+    <div class="why__inner">
+      <p class="section-kicker">Why Hinglish is hard to read with ordinary sentiment tools</p>
+      <h2 class="section-title">The same word, written five different ways.</h2>
+
+      <div class="why__examples">
+        <div class="why__example">
+          <p class="why__example-row">
+            <span class="why__variant">accha</span>
+            <span class="why__variant">acha</span>
+            <span class="why__variant">achha</span>
+          </p>
+          <p class="why__caption">Three spellings of the same word — "good" — all carrying the same sentiment. A model trained only on English can't tell they match.</p>
+        </div>
+
+        <div class="why__example">
+          <p class="why__example-sentence">
+            "movie <em>acchi thi</em> <strong>BUT</strong> ending <em>bakwas thi</em>"
+          </p>
+          <p class="why__caption">One sentence, two sentiments in two languages — positive about the movie, negative about the ending. Hinglish sentiment means resolving both halves, not averaging them away.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="how" id="how-it-works">
+    <div class="how__inner">
+      <p class="section-kicker">From sentence to result</p>
+      <h2 class="section-title">How it works</h2>
+
+      <ol class="how__steps">
+        <li class="how__step">
+          <span class="how__step-num">1</span>
+          <h3>Write your sentence</h3>
+          <p>Type or paste any Hinglish text — mixed Hindi and English, in Roman script, exactly as you'd text it.</p>
+        </li>
+        <li class="how__step">
+          <span class="how__step-num">2</span>
+          <h3>Choose a model</h3>
+          <p>Pick a specific experiment to compare, or leave it on Auto to use the best-performing model.</p>
+        </li>
+        <li class="how__step">
+          <span class="how__step-num">3</span>
+          <h3>Run the analysis</h3>
+          <p>The model reads the full sentence — code-switching, spelling variation, and mixed clauses included.</p>
+        </li>
+        <li class="how__step">
+          <span class="how__step-num">4</span>
+          <h3>Read the result</h3>
+          <p>See the predicted sentiment, how confident the model is, and the probability split across all three classes.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="models" id="models">
+    <div class="models__inner">
+      <p class="section-kicker">Four experiments, one question</p>
+      <h2 class="section-title">Models</h2>
+      <p class="models__intro">Each experiment answers the same question differently: how much structure does a model need to understand Hinglish? Status and scores below are read live from the saved model manifests.</p>
+
+      <div class="models__grid">
+        <article class="model-card" data-model-card="e1">
+          <div class="model-card__top">
+            <h3>E1</h3>
+            <span class="model-card__badge model-card__badge--classical">Classical ML · BDA</span>
+          </div>
+          <p class="model-card__name">TF-IDF + Logistic Regression</p>
+          <p class="model-card__desc">A word-frequency baseline with a multinomial linear classifier, built as a Scala + Spark MLlib pipeline. Fast and interpretable, with no notion of word order.</p>
+          <p class="model-card__status" data-card-status="e1">Checking status…</p>
+          <p class="model-card__metric" data-card-metric="e1"><span class="model-card__metric-value">—</span><span class="model-card__metric-label">Test Macro-F1</span></p>
+        </article>
+
+        <article class="model-card" data-model-card="e2">
+          <div class="model-card__top">
+            <h3>E2</h3>
+            <span class="model-card__badge model-card__badge--classical">Classical ML · BDA</span>
+          </div>
+          <p class="model-card__name">Word + Character Features + SVM</p>
+          <p class="model-card__desc">Adds genuine character 3-grams to word TF-IDF, then a One-vs-Rest LinearSVC (Spark MLlib), so spelling variants like "accha" and "achha" share signal.</p>
+          <p class="model-card__status" data-card-status="e2">Checking status…</p>
+          <p class="model-card__metric" data-card-metric="e2"><span class="model-card__metric-value">—</span><span class="model-card__metric-label">Test Macro-F1</span></p>
+        </article>
+
+        <article class="model-card" data-model-card="e3">
+          <div class="model-card__top">
+            <h3>E3</h3>
+            <span class="model-card__badge model-card__badge--transformer">Transformer · TA</span>
+          </div>
+          <p class="model-card__name">XLM-R</p>
+          <p class="model-card__desc">FacebookAI/xlm-roberta-base — generic multilingual pretraining on 100 languages — fine-tuned on Hinglish sentiment.</p>
+          <p class="model-card__status" data-card-status="e3">Checking status…</p>
+          <p class="model-card__metric" data-card-metric="e3"><span class="model-card__metric-value">—</span><span class="model-card__metric-label">Test Macro-F1</span></p>
+        </article>
+
+        <article class="model-card model-card--best" data-model-card="e4">
+          <div class="model-card__top">
+            <h3>E4</h3>
+            <span class="model-card__badge model-card__badge--best">Domain-adapted · TA</span>
+          </div>
+          <p class="model-card__name">HingRoBERTa</p>
+          <p class="model-card__desc">l3cube-pune/hing-roberta — pretrained on Hindi-English code-mixed text — fine-tuned with exactly the same script and settings as E3.</p>
+          <p class="model-card__status" data-card-status="e4">Checking status…</p>
+          <p class="model-card__metric" data-card-metric="e4"><span class="model-card__metric-value">—</span><span class="model-card__metric-label">Test Macro-F1</span></p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="insight" id="research-insight">
+    <div class="insight__inner">
+      <p class="section-kicker">Research insight · E4 − E3 on the locked test split</p>
+      <p class="insight__stat" id="insightStat">—</p>
+      <p class="insight__body" id="insightBody">Loading verified results…</p>
+      <div class="insight__historical">
+        <p class="insight__historical-title">Reported midterm results — not reproducible, not locked-test</p>
+        <p class="insight__historical-body">The midterm reported E3 74.10% and E4 85.16% Macro-F1 (+11.06 pp). The audit found the E3 figure was a validation score, that 1,446 of the 3,000 supplied validation rows were copies of training rows, and that no E4 checkpoint was saved. Both models were therefore retrained on a verified, de-duplicated split; the number above comes only from that re-run.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel-section" id="batch" aria-labelledby="batch-title">
+    <div class="panel-section__inner">
+      <p class="section-kicker">Many rows at once</p>
+      <h2 class="section-title" id="batch-title">Batch analysis</h2>
+      <p class="panel-section__intro">Upload a CSV with a text column (auto-detected from <code>text</code>, <code>sentence</code>, <code>tweet</code>, <code>content</code>…). Rows go through the same pipeline as single predictions; empty or over-long rows are kept and marked, never silently dropped.</p>
+
+      <form class="panel" id="batchForm" novalidate>
+        <div class="panel__row">
+          <label class="field">
+            <span class="field-label">CSV file</span>
+            <input type="file" id="batchFile" accept=".csv,text/csv" class="field__file">
+          </label>
+          <label class="field">
+            <span class="field-label">Text column <span class="field__hint">(optional)</span></span>
+            <input type="text" id="batchColumn" class="field__input" placeholder="auto-detect" maxlength="100">
+          </label>
+          <label class="field">
+            <span class="field-label">Model</span>
+            <select id="batchModel" class="field__input">
+              <option value="auto">Auto</option>
+              <option value="e1">E1 — TF-IDF + LR</option>
+              <option value="e2">E2 — Word + Char + SVM</option>
+              <option value="e3">E3 — XLM-R</option>
+              <option value="e4">E4 — HingRoBERTa</option>
+            </select>
+          </label>
+        </div>
+        <div class="panel__actions">
+          <button type="submit" class="btn btn--primary" id="batchSubmit">Run batch</button>
+          <span class="panel__hint" id="batchLimits"></span>
+        </div>
+        <p class="analyzer__error" id="batchError" role="alert" hidden></p>
+      </form>
+
+      <div class="panel" id="batchResult" hidden aria-live="polite">
+        <div class="batch__head">
+          <div>
+            <p class="batch__status" id="batchStatus">—</p>
+            <p class="panel__hint" id="batchMeta"></p>
+          </div>
+          <a class="btn btn--secondary btn--sm" id="batchDownload" href="#" download hidden>Download results CSV</a>
+        </div>
+        <div class="progress" id="batchProgressWrap" hidden><div class="progress__fill" id="batchProgress"></div></div>
+        <div class="dist" id="batchDist"></div>
+        <div class="table-wrap"><table class="data-table" id="batchTable"></table></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel-section panel-section--alt" id="research" aria-labelledby="research-title">
+    <div class="panel-section__inner">
+      <p class="section-kicker">Locked test split · machine-generated from saved artifacts</p>
+      <h2 class="section-title" id="research-title">Research dashboard</h2>
+      <p class="panel-section__intro" id="researchSplit">Loading evaluation artifacts…</p>
+      <div class="table-wrap"><table class="data-table data-table--metrics" id="metricsTable"></table></div>
+      <p class="panel__hint" id="significanceText"></p>
+      <h3 class="panel-section__sub">Confusion matrices (rows = true, columns = predicted)</h3>
+      <div class="cm-grid" id="cmGrid"></div>
+      <h3 class="panel-section__sub">Where models go wrong (heuristic hints)</h3>
+      <div class="table-wrap"><table class="data-table" id="errorTable"></table></div>
+      <p class="panel__hint">Hints are simple lexicon/regex flags (e.g. Hindi negators <code>nahi</code>/<code>mat</code>, contrast <code>lekin</code>/<code>par</code>), not manual annotations, and do not explain why an error happened.</p>
+    </div>
+  </section>
+
+  <section class="panel-section" id="history" aria-labelledby="history-title">
+    <div class="panel-section__inner">
+      <p class="section-kicker">Stored in this deployment's database</p>
+      <h2 class="section-title" id="history-title">History &amp; analytics</h2>
+      <p class="panel-section__intro" id="historyPrivacy"></p>
+
+      <div class="stats" id="analyticsStats"></div>
+      <div class="analytics-grid">
+        <div class="panel"><h3 class="panel__title">Predicted sentiment</h3><div class="dist" id="analyticsDist"></div></div>
+        <div class="panel"><h3 class="panel__title">Model usage</h3><div class="dist" id="analyticsModels"></div></div>
+        <div class="panel"><h3 class="panel__title">Latency (single requests)</h3><div class="table-wrap"><table class="data-table" id="analyticsLatency"></table></div></div>
+        <div class="panel"><h3 class="panel__title">Requests per day</h3><div class="dist" id="analyticsDays"></div></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel__row panel__row--filters">
+          <label class="field"><span class="field-label">Model</span>
+            <select id="histModel" class="field__input"><option value="">All</option><option value="e1">E1</option><option value="e2">E2</option><option value="e3">E3</option><option value="e4">E4</option></select></label>
+          <label class="field"><span class="field-label">Prediction</span>
+            <select id="histPred" class="field__input"><option value="">All</option><option value="positive">Positive</option><option value="neutral">Neutral</option><option value="negative">Negative</option></select></label>
+          <label class="field"><span class="field-label">Source</span>
+            <select id="histSource" class="field__input"><option value="">All</option><option value="single">Single</option><option value="compare">Compare</option><option value="batch">Batch</option></select></label>
+          <div class="panel__actions panel__actions--end">
+            <button type="button" class="btn btn--secondary btn--sm" id="histRefresh">Refresh</button>
+            <button type="button" class="btn btn--danger btn--sm" id="histClear">Clear history</button>
+          </div>
+        </div>
+        <div class="table-wrap"><table class="data-table" id="historyTable"></table></div>
+        <div class="pager">
+          <button type="button" class="btn btn--secondary btn--sm" id="histPrev">Previous</button>
+          <span class="panel__hint" id="histPage"></span>
+          <button type="button" class="btn btn--secondary btn--sm" id="histNext">Next</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="about" id="about">
+    <div class="about__inner">
+      <p class="section-kicker">About this project</p>
+      <h2 class="section-title">An academic project in two parts</h2>
+
+      <div class="about__blocks">
+        <div class="about__block">
+          <h3>Text Analytics</h3>
+          <p>Understanding Hinglish sentence by sentence — cleaning noise while preserving sentiment-bearing signal, comparing a general multilingual model against one built specifically for code-mixed text, and evaluating how well each tells Positive, Negative, and Neutral apart.</p>
+        </div>
+        <div class="about__block">
+          <h3>Big Data Analytics</h3>
+          <p>Processing the dataset with Apache Spark — DataFrame-based pipelines, Spark ML for the classical experiments, and a look at how the pipeline scales, run locally rather than on a multi-node cluster.</p>
+        </div>
+      </div>
+      <p class="about__disclaimer">HinglishSense is a research prototype trained on SemEval-2020 Task 9 (SentiMix) tweets. It estimates the overall sentiment of a sentence; it does not reliably understand sarcasm or context, and its scores are not a measure of anyone's real feelings.</p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <p class="footer__brand">HinglishSense</p>
+  <p class="footer__meta">TA × BDA • Sentiment Analysis</p>
+  <p class="footer__note">Academic Research Project</p>
+</footer>
+
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/app.js"></script>
+<script src="js/dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,53 @@
+# Environments / secrets
+.venv/
+venv/
+.env
+*.pem
+*.key
+
+# Caches / temp / build output
+__pycache__/
+*.pyc
+.pytest_cache/
+python/.pytest_cache/
+.cache/
+.tmp/
+spark/target/
+spark/project/target/
+spark/project/project/
+.bsp/
+metastore_db/
+spark-warehouse/
+derby.log
+hs_err_pid*.log
+
+# SentiMix data (licence: do not redistribute) — raw, processed text, root copies
+data/raw/**
+!data/raw/.gitkeep
+data/processed/*.tsv
+data/batch_outputs/
+data/*.db
+data/*.db-*
+/*.tsv
+/train.txt
+/validation.txt
+/test.txt
+
+# Coursework binaries supplied with the project
+*.zip
+*.pptx
+
+# Model weights/checkpoints (several GB) — keep only manifests + calibration
+artifacts/models/**
+!artifacts/models/**/
+!artifacts/models/*/v2-clean-split/manifest.json
+!artifacts/models/*/v2-clean-split/calibration.json
+!artifacts/models/*/v2-clean-split/best/calibration.json
+!artifacts/models/.gitkeep
+
+# Run logs and anything containing dataset text
+artifacts/logs/
+artifacts/error_analysis/errors_all_models.csv
+
+# Legacy midterm prediction file contains SentiMix tweet text
+artifacts/legacy_midterm/e3_test_predictions.csv

@@ -1,0 +1,184 @@
+{
+  "schema_version": 2,
+  "experiment_id": "E4",
+  "display_name": "HingRoBERTa (Hindi-English domain-adapted)",
+  "family": "transformer",
+  "framework": "pytorch+huggingface",
+  "run_tag": "v2-clean-split",
+  "version": "e4-v2-clean-split",
+  "source_checkpoint": "l3cube-pune/hing-roberta",
+  "source_checkpoint_revision": "cb17591d992503f44c432ca6e18fe58aa58458b4",
+  "seed": 42,
+  "dataset": {
+    "split_manifest_sha256": "317831cef513b63cc671720c1a9513349131fd8fb4587c769346689be0d19fd0",
+    "test_sample_ids_sha256": "ad209317610a7dbe5574b42efb0323b39bc03b1ebe247e2d73738c5b4f3bcc28",
+    "train_rows": 11654,
+    "validation_rows": 1457,
+    "test_rows": 1457,
+    "raw_source_sha256": {
+      "data/raw/sentimix_supplied/FinalTrainingOnly.tsv": "17db5205069aef2ae9d50f410cf9e63f3249af1a0fdb7889a6e7f33f36d8d8b4",
+      "data/raw/sentimix_supplied/ValidationOnly.tsv": "6204e965bc54232b13690596c800cf3870600cc229015b36222407f1bcd1bee9"
+    },
+    "preprocessing": {
+      "version": "shared-norm-v1",
+      "sha256": "2a91b897c6a61fb496064fa895081f50cf8c6563caaaba05a49117a3f6f0019a"
+    },
+    "label_mapping_sha256": "37d1487643d4a1642c1528e5f0c316243f4512a863f209bb021a5d9e2e162f97"
+  },
+  "hyperparameters": {
+    "max_seq_length": 128,
+    "num_epochs": 5,
+    "train_batch_size": 16,
+    "eval_batch_size": 32,
+    "learning_rate": 2e-05,
+    "weight_decay": 0.01,
+    "warmup_ratio": 0.06,
+    "early_stopping_patience": 2,
+    "fp16": true,
+    "optimizer": "OptimizerNames.ADAMW_BNB",
+    "model_selection_metric": "validation macro_f1",
+    "smoke_test": false
+  },
+  "training_log": [
+    {
+      "eval_loss": 0.7512928247451782,
+      "eval_accuracy": 0.6794783802333562,
+      "eval_macro_f1": 0.6834742545094942,
+      "eval_weighted_f1": 0.6778704896633324,
+      "eval_runtime": 2.1113,
+      "eval_samples_per_second": 690.096,
+      "eval_steps_per_second": 21.788,
+      "epoch": 1.0,
+      "step": 729
+    },
+    {
+      "eval_loss": 0.7539877891540527,
+      "eval_accuracy": 0.6726149622512011,
+      "eval_macro_f1": 0.6752063828115458,
+      "eval_weighted_f1": 0.6694294883534669,
+      "eval_runtime": 1.7288,
+      "eval_samples_per_second": 842.778,
+      "eval_steps_per_second": 26.608,
+      "epoch": 2.0,
+      "step": 1458
+    },
+    {
+      "eval_loss": 0.870514988899231,
+      "eval_accuracy": 0.6630061770761839,
+      "eval_macro_f1": 0.6651149346025317,
+      "eval_weighted_f1": 0.6592052505429116,
+      "eval_runtime": 1.8804,
+      "eval_samples_per_second": 774.834,
+      "eval_steps_per_second": 24.463,
+      "epoch": 3.0,
+      "step": 2187
+    }
+  ],
+  "selected_checkpoint_step": 729,
+  "selected_epoch": 1.0,
+  "validation_metrics": {
+    "schema_version": 1,
+    "accuracy": 0.6794783802333562,
+    "macro_precision": 0.6814364136431847,
+    "macro_recall": 0.6862606678053288,
+    "macro_f1": 0.6834742545094942,
+    "weighted_f1": 0.6778704896633324,
+    "per_class": {
+      "negative": {
+        "precision": 0.7162471395881007,
+        "recall": 0.7347417840375586,
+        "f1": 0.7253765932792584,
+        "support": 426
+      },
+      "neutral": {
+        "precision": 0.6120857699805068,
+        "recall": 0.5740402193784278,
+        "f1": 0.5924528301886792,
+        "support": 547
+      },
+      "positive": {
+        "precision": 0.7159763313609467,
+        "recall": 0.75,
+        "f1": 0.7325933400605449,
+        "support": 484
+      }
+    },
+    "confusion_matrix": [
+      [
+        313,
+        101,
+        12
+      ],
+      [
+        101,
+        314,
+        132
+      ],
+      [
+        23,
+        98,
+        363
+      ]
+    ],
+    "labels_order": [
+      "negative",
+      "neutral",
+      "positive"
+    ],
+    "probabilistic_uncalibrated": {
+      "log_loss": 0.7513011571114079,
+      "brier_multiclass": 0.44769587720806814,
+      "ece_15_bins": 0.05472333257291768
+    },
+    "probabilistic_calibrated": {
+      "log_loss": 0.7500903771171654,
+      "brier_multiclass": 0.4472292952186278,
+      "ece_15_bins": 0.05193632472330865
+    }
+  },
+  "calibration": {
+    "method": "temperature_scaling",
+    "temperature": 1.0788653438037694,
+    "fitted_on": "validation",
+    "file": "best/calibration.json"
+  },
+  "score_semantics": "calibrated_probability (temperature scaling fitted on validation)",
+  "artifact_dir": "artifacts/models/e4/v2-clean-split/best",
+  "artifact_sha256": {
+    "pytorch_model.bin": "e9499976d7e8047b6da1b203c5a8dae5ed73d0665adbf02458765c5eac77f894",
+    "calibration.json": "757ae3ea2c884615a99723a99e0de4eab4295d9a910879f2bd33f364db6d38a5"
+  },
+  "artifact_size_bytes": 1112253230,
+  "training_runtime_seconds": 745.3025786000071,
+  "environment": {
+    "python_version": "3.12.8 (tags/v3.12.8:2dc476b, Dec  3 2024, 19:30:04) [MSC v.1942 64 bit (AMD64)]",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "git_commit": null,
+    "torch_version": "2.5.1+cu121",
+    "transformers_version": "4.46.3",
+    "datasets_version": "5.0.1",
+    "accelerate_version": "1.15.0",
+    "evaluate_version": "0.4.6",
+    "scikit-learn_version": "1.9.1",
+    "pandas_version": "3.0.5",
+    "numpy_version": "2.4.6",
+    "torch_cuda_available": true,
+    "torch_cuda_device_name": "NVIDIA GeForce RTX 3050 Laptop GPU"
+  },
+  "status": {
+    "training": "completed",
+    "selection": "validation_macro_f1",
+    "locked_test_evaluation": "completed"
+  },
+  "notes": [
+    "Model selection and calibration used the validation split only; the test split was not read."
+  ],
+  "created_at_unix": 1793992657.2848868,
+  "test_metrics_summary": {
+    "accuracy": 0.6781056966369252,
+    "macro_f1": 0.6810396534098752,
+    "weighted_f1": 0.6757886544978855,
+    "macro_precision": 0.6783568544257238,
+    "macro_recall": 0.686361729450911
+  }
+}

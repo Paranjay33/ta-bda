@@ -1,0 +1,73 @@
+# HinglishSense local multi-service stack.
+#
+#   cp .env.example .env        # adjust if needed
+#   docker compose up --build   # -> http://localhost:8000  (API docs: /docs)
+#
+# Requires trained artifacts on the host under ./artifacts (mounted read-only)
+# and the frozen split under ./data/processed. Nothing is trained at start-up.
+# GPU: build the api image with the CUDA torch wheel and uncomment `deploy:`.
+name: hinglishsense
+
+services:
+  spark:
+    build:
+      context: .
+      dockerfile: deploy/spark.Dockerfile
+    image: hinglishsense-spark:1.0.0
+    restart: unless-stopped
+    environment:
+      SPARK_SERVING_MASTER: ${SPARK_SERVING_MASTER:-local[2]}
+    volumes:
+      - ./artifacts:/app/artifacts:ro
+      - ./data/processed:/app/data/processed:ro
+    expose:
+      - "8090"            # internal only; never published
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c 'exec 3<>/dev/tcp/127.0.0.1/8090 && printf \"GET /health HTTP/1.0\\r\\n\\r\\n\" >&3 && grep -q loaded <&3'"]
+      interval: 20s
+      timeout: 5s
+      start_period: 120s
+      retries: 5
+
+  api:
+    build:
+      context: .
+      dockerfile: deploy/api.Dockerfile
+      args:
+        TORCH_INDEX: ${TORCH_INDEX:-https://download.pytorch.org/whl/cpu}
+    image: hinglishsense-api:1.0.0
+    restart: unless-stopped
+    depends_on:
+      spark:
+        condition: service_started
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-sqlite:////app/state/hinglishsense.db}
+      SPARK_SERVICE_URL: http://spark:8090
+      BATCH_OUTPUT_DIR: /app/state/batch_outputs
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:8000}
+    ports:
+      - "${API_PORT:-8000}:8000"
+    volumes:
+      - ./artifacts:/app/artifacts:ro
+      - ./data/processed:/app/data/processed:ro
+      - hinglishsense-state:/app/state
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices: [{ driver: nvidia, count: 1, capabilities: [gpu] }]
+
+  # Optional TLS/reverse proxy for a hosted deployment: `docker compose --profile proxy up`
+  proxy:
+    profiles: ["proxy"]
+    image: nginx:1.27.3-alpine
+    depends_on: [api]
+    ports:
+      - "80:80"
+    volumes:
+      - ./deploy/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+
+volumes:
+  hinglishsense-state:

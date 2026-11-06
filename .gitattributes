@@ -1,0 +1,4 @@
+# Keep LF everywhere (shell scripts must run in Docker/Linux); Windows tools handle LF fine.
+* text=auto eol=lf
+*.png binary
+*.jpg binary
