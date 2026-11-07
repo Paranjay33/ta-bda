@@ -1,0 +1,17 @@
+# v3b protocol overlay (Kaggle GPU) — same as v3 but with a schedule that fits.
+#   HINGLISH_CONFIG_OVERLAY=configs/kaggle_v3b.yaml
+# Why: in v3 (max 30 epochs) the warmup (6% of 30 epochs ≈ 1.8 epochs) and the
+# linear decay were spread over 30 epochs, but early stopping ended every run
+# after ~4-5 epochs — training stopped while the learning rate was still near
+# its peak. With max 8 epochs, warmup is ~0.5 epoch and the rate actually
+# decays within the epochs that are used. Applied IDENTICALLY to E3 and E4.
+transformer:
+  optimizer: adamw_torch          # full fp32 AdamW
+  num_epochs: 8
+  early_stopping_patience: 3      # on validation Macro-F1
+  run_tag: "v3b-kaggle"
+
+v3_search:
+  learning_rates: [1.0e-5, 2.0e-5, 3.0e-5]
+  search_seed: 42
+  confirm_seeds: [42, 43, 44]

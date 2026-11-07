@@ -78,5 +78,5 @@ bash scripts/run_scalability_benchmark.sh
 Step-by-step: `kaggle/README.md`. In short: `python scripts/make_kaggle_bundle.py` → upload
 `dist/hinglishsense_kaggle_bundle.zip` as a **private** Kaggle dataset → import
 `kaggle/hinglishsense_v3_train.ipynb`, GPU + Internet on → Save & Run All → download
-`hinglishsense_v3_models.zip` → `python -m hinglish.import_kaggle_v3 <zip>` →
-`bash scripts/evaluate_v3_locked.sh` → restart the app.
+the models zip → `python -m hinglish.import_kaggle_v3 <zip>` → `python -m hinglish.select_transformer_run --apply`
+(validation only) → `bash scripts/evaluate_v3_locked.sh` → restart the app. Prefer the v3b notebook (8 epochs).

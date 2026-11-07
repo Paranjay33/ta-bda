@@ -86,7 +86,7 @@ bash scripts/run_scalability_benchmark.sh # BDA 1x/5x/10x (replicated workload, 
 (On Linux use `.venv/bin/python`.) Guides: `docs/TRAINING_GUIDE.md`, `docs/EVALUATION_PROTOCOL.md`.
 
 **Train E3/E4 on Kaggle (v3: fp32 AdamW, up to 30 epochs, LR search, 3 seeds):** follow `kaggle/README.md`, then
-`python -m hinglish.import_kaggle_v3 <zip>` and `bash scripts/evaluate_v3_locked.sh`.
+`python -m hinglish.import_kaggle_v3 <zip>`, `python -m hinglish.select_transformer_run --apply` (validation only) and `bash scripts/evaluate_v3_locked.sh`.
 
 ## Tests
 

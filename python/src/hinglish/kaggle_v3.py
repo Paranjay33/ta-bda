@@ -38,8 +38,11 @@ WEIGHT_GLOBS = ("*.bin", "*.safetensors", "tokenizer.json", "sentencepiece.bpe.m
 SMOKE = False  # --smoke: tiny local dry run of the whole orchestration (train.py --smoke-test)
 
 
+PREFIX = "v3"  # set in main() from transformer.run_tag ("v3-kaggle" -> "v3", "v3b-kaggle" -> "v3b")
+
+
 def _tag(lr: float, seed: int) -> str:
-    return f"v3-run-lr{lr:g}-s{seed}"
+    return f"{PREFIX}-run-lr{lr:g}-s{seed}"
 
 
 def _run_dir(cfg, exp: str, tag: str) -> Path:
@@ -164,10 +167,10 @@ def export(cfg, summaries: list[dict], out: Path) -> Path:
         (dst / "manifest.json").write_text(json.dumps(m, indent=2, default=str), encoding="utf-8")
     from .prepare_data import split_identity
 
-    summary = {"protocol": "v3 (configs/kaggle_v3.yaml)", "created_at": time.strftime("%Y-%m-%d %H:%M:%S"),
+    summary = {"protocol": os.environ.get("HINGLISH_CONFIG_OVERLAY"), "run_tag": final_tag, "created_at": time.strftime("%Y-%m-%d %H:%M:%S"),
                "environment": _env(), "dataset": split_identity(cfg), "experiments": summaries}
     (out / "v3_search_summary.json").write_text(json.dumps(summary, indent=2, default=str), encoding="utf-8")
-    zip_path = out.parent / "hinglishsense_v3_models.zip"
+    zip_path = out.parent / f"hinglishsense_{final_tag}_models.zip"
     with zipfile.ZipFile(zip_path, "w", compression=zipfile.ZIP_STORED) as z:  # weights do not compress
         for p in sorted(out.rglob("*")):
             if p.is_file():
@@ -192,10 +195,11 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--allow-cpu", action="store_true")
     p.add_argument("--smoke", action="store_true", help="tiny dry run (64 rows, 1 epoch per run) to test the pipeline")
     args = p.parse_args(argv)
-    global SMOKE
+    global SMOKE, PREFIX
     SMOKE = args.smoke
     os.environ.setdefault("HINGLISH_CONFIG_OVERLAY", "configs/kaggle_v3.yaml")
     cfg = load_config()
+    PREFIX = str(cfg.get("transformer", "run_tag")).split("-")[0]
     if cfg.get("v3_search") is None:
         raise SystemExit("v3_search missing: set HINGLISH_CONFIG_OVERLAY=configs/kaggle_v3.yaml")
 

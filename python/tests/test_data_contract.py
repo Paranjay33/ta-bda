@@ -262,3 +262,39 @@ def test_v3_search_space_is_identical_for_e3_and_e4():
 
     src = inspect.getsource(kaggle_v3.run_experiment)
     assert "exp ==" not in src and 'exp=="E' not in src  # no per-experiment special cases
+
+
+def test_select_transformer_run_uses_validation_mean_and_switches_only_transformers(tmp_path):
+    import json as _json
+
+    from hinglish import select_transformer_run as sel
+
+    root = _fixture_project(tmp_path, _rows(30))
+    for tag, (v3, v4) in {"v2-clean-split": (0.63, 0.68), "v3b-kaggle": (0.66, 0.67), "v3-kaggle": (0.70, 0.60)}.items():
+        for exp, v in (("e3", v3), ("e4", v4)):
+            d = root / "artifacts" / "models" / exp / tag
+            (d / "best").mkdir(parents=True)
+            (d / "manifest.json").write_text(_json.dumps({
+                "experiment_id": exp.upper(), "version": f"{exp}-{tag}", "status": {"training": "completed"},
+                "validation_metrics": {"macro_f1": v}}), encoding="utf-8")
+    (root / "artifacts" / "models" / "e3" / "v9-run-lr1e-05-s42").mkdir(parents=True)  # sub-runs ignored
+    (root / "artifacts" / "metrics").mkdir(parents=True)
+    cfg = load_config(root)
+    assert set(sel.candidates(cfg)) == {"v2-clean-split", "v3b-kaggle", "v3-kaggle"}
+    import os
+    old = os.environ.get("HINGLISH_PROJECT_ROOT")
+    os.environ["HINGLISH_PROJECT_ROOT"] = str(root)
+    try:
+        assert sel.main([]) == 0                         # show only: config unchanged
+        assert load_config(root).get("transformer", "run_tag") == "v2-clean-split"
+        assert sel.main(["--apply"]) == 0                # best mean: v2 0.655 / v3b 0.665 / v3 0.65
+        after = load_config(root)
+        assert after.get("transformer", "run_tag") == "v3b-kaggle"
+        assert after.get("spark", "run_tag") == "v2-clean-split"
+        vm = _json.loads((root / "artifacts" / "metrics" / "e4_validation_metrics.json").read_text())
+        assert vm["model_version"] == "e4-v3b-kaggle"
+    finally:
+        if old is None:
+            os.environ.pop("HINGLISH_PROJECT_ROOT", None)
+        else:
+            os.environ["HINGLISH_PROJECT_ROOT"] = old

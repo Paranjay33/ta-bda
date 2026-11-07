@@ -69,8 +69,15 @@ on seed 42 using **validation** Macro-F1, the chosen rate re-run with seeds 42/4
 best validation seed; validation mean ± sd across seeds is reported. Everything else (split, max
 length, batch sizes, warmup, weight decay, calibration) is unchanged. Kaggle never reads the test split.
 
-After `python -m hinglish.import_kaggle_v3 <zip>` (verifies split identity, weight hashes, label
-order; archives v2 results under `artifacts/metrics/runs/`), `bash scripts/evaluate_v3_locked.sh`
-evaluates the two v3 models on the locked test split **once** (it refuses to repeat). Because the
-test split was already used for v2, v3 is reported as a **second run**, next to v2, with both
-entries in `locked_test_log.jsonl`; no v3 setting was chosen using test data.
+`configs/kaggle_v3b.yaml` is the same procedure with max 8 epochs: in v3 the warmup (6% of 30
+epochs) and linear decay were spread over 30 epochs while early stopping ended runs after ~4-5,
+so training stopped near the peak learning rate.
+
+Flow: `python -m hinglish.import_kaggle_v3 <zip>` only installs (verifies split identity, weight
+hashes, label order). `python -m hinglish.select_transformer_run --apply` chooses the served run
+among v2 / v3 / v3b by the **mean of E3 and E4 validation Macro-F1** (both models always from the
+same protocol), archives the current results and switches `transformer.run_tag`. Only then
+`bash scripts/evaluate_v3_locked.sh` evaluates the selected run on the locked test split **once**
+(it refuses to repeat). Non-selected runs are never evaluated on test. Because the test split was
+already used for v2, a new run is reported as a further run next to v2, with every evaluation in
+`locked_test_log.jsonl`.

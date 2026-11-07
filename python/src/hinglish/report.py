@@ -132,9 +132,9 @@ def write_comparison(cfg, rows: list[dict]) -> str:
                          f"McNemar exact p = {sig['mcnemar_p']:.4g}.")
     else:
         lines.append("Not available: E3 and/or E4 has no completed locked test evaluation.")
-    v3 = _load_json(mdir / "v3_search_summary.json")
+    v3 = _load_json(mdir / f"search_summary_{cfg.get('transformer', 'run_tag')}.json")
     if v3:
-        lines += ["", "## v3 (Kaggle) validation-only search", "",
+        lines += ["", f"## {v3.get('run_tag', 'v3')} (Kaggle) validation-only search", "",
                   f"GPU: {v3.get('environment', {}).get('gpu')}. Identical search for E3 and E4; test split not read.", "",
                   "| Exp | LR search (val Macro-F1, seed 42) | Chosen LR | Seeds (val Macro-F1) | Mean ± sd | Served seed |",
                   "|---|---|---:|---|---|---:|"]

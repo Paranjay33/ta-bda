@@ -380,7 +380,7 @@ def create_app(settings: Settings | None = None, registry: ModelRegistry | None 
                                                                               "val_macro_f1_mean", "val_macro_f1_sd",
                                                                               "selected_seed")}
                                                            for e in v["experiments"]]})(
-                _read(mdir / "v3_search_summary.json")),
+                _read(mdir / f"search_summary_{cfg.get('transformer', 'run_tag')}.json")),
             "error_analysis": _read(cfg.path("paths", "error_analysis_dir") / "error_summary.json"),
             "confusion_matrices": {m.upper(): ((registry.entries[m].test_metrics or {}).get("metrics") or {})
                                    .get("confusion_matrix") for m in MODEL_IDS},
