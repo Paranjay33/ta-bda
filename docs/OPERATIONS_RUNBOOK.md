@@ -31,7 +31,8 @@
 
 | Symptom | Cause / fix |
 |---|---|
-| `e1/e2 unavailable: spark_service_unreachable` | start `bash scripts/run_spark.sh serve`; check the log |
+| `e1/e2 unavailable: spark_service_unreachable` | with `start_local.sh` the Spark service is supervised and restarts itself (~30-40 s, verified by killing the JVM); otherwise start `bash scripts/run_spark.sh serve` and check the log |
+| Spark service died after the laptop slept (`Futures timed out after [10000 milliseconds]`, `Cannot find endpoint: CoarseGrainedScheduler`) | observed 2026-11-07. Fixed: serving JVM uses long heartbeat/network timeouts, a watchdog exits if the SparkContext stops, and the supervisor restarts it |
 | `spark_service_version_mismatch` | Spark service is serving an older model run; restart it after retraining |
 | `e3/e4 unavailable: not_trained` | run `bash scripts/train_transformers.sh` |
 | Model shows `device: cpu` on a GPU machine | GPU memory full (another program); free it and restart the API |

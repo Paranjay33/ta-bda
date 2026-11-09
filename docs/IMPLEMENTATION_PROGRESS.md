@@ -1,4 +1,4 @@
-# Implementation progress (final state, 2026-11-07)
+# Implementation progress (final state, 2026-11-09)
 
 Legend: **done (tested)** = implemented and verified by an executed test/run; done (untested);
 blocked (external).
@@ -26,20 +26,24 @@ blocked (external).
 | Frontend (supplied UI, wired to real inference) | **done (tested)** | Playwright/Edge 12 passed (+1 skip), screenshots in `artifacts/logs/ui_*.png` |
 | End-to-end acceptance (§15.5) incl. restart persistence | **done (tested)** | `scripts/e2e_acceptance.py`: 12/12 before, 4/4 after restart |
 | Docker / Compose | done (untested) — **blocked: Docker not installed** | `compose.yaml`, `deploy/` |
-| Cloud deployment | **blocked: no account/credentials** (user chose to do this next) | `docs/DEPLOYMENT.md` |
+| Cloud deployment | **blocked: no account/credentials** | `docs/DEPLOYMENT.md` |
+| Kaggle v3 / v3b training path (LR search, 3 seeds, fp32) | **done (rehearsed end to end locally)**; a v3 run was executed on Kaggle by the user (E4 val Macro-F1 0.666-0.668 across LRs/seeds, below v2's 0.684); it was **not imported** and v2 remains the served/evaluated run. v3b was not run (decision: not needed for the end-term) | `kaggle/README.md` |
+| E3+E4 ensemble (validation only) | measured, **rejected**: every weighting is below E4 alone (best 0.679 vs 0.684); oracle upper bound 0.743 accuracy | this file |
+| Spark serving resilience (laptop sleep) | **done (tested)**: long timeouts + watchdog + supervised restart; JVM killed on purpose and recovered in ~37 s | `docs/OPERATIONS_RUNBOOK.md` |
 
-## Test runs executed (final)
-
-`RUN_UI=1 RUN_LIVE=1 bash scripts/test_all.sh` → exit 0 (`artifacts/logs/test_all.log`):
+## Test runs executed (final, 2026-11-09)
 
 | Suite | Result |
 |---|---|
 | Repository structure | OK |
-| Python research package (`python/tests`) | 39 passed |
+| Python research package (`python/tests`) | 42 passed |
 | API integration (`backend/tests/test_api.py`) | 22 passed |
 | Scala / Spark (`sbt test`) | 13 passed |
 | Browser UI (`backend/tests/test_ui.py`, Edge) | 12 passed, 1 skipped (unavailable-model UI state cannot occur while all models are up; it passed in an earlier run when E3/E4 were untrained) |
 | Live models (`backend/tests/test_live_models.py`) | 6 passed |
+
+Total: 95 passed, 1 skipped. (A full run earlier the same day showed 2 extra skips because the
+Spark service had died after the laptop slept — the cause of the resilience fix above.)
 
 `python scripts/e2e_acceptance.py --phase before` → 12/12; `--phase after-restart` → 4/4.
 
@@ -51,3 +55,5 @@ blocked (external).
   removed sklearn argument.
 - Spark scalability benchmark evicted its cached base data after the 1× run and had no warm-up.
 - Native crashes during training traced to a full system drive (page file); temp files redirected.
+- Spark serving died after laptop sleep (heartbeat timeout); now tolerant and self-restarting.
+- YAML overrides such as `1e-5` were parsed as strings; `train.py` could overwrite an existing run.

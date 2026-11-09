@@ -50,6 +50,12 @@ object SparkInferenceServer {
     val spark = SparkSessions.builder("hinglishsense-spark-serving", master)
       .config("spark.sql.shuffle.partitions", "1")
       .config("spark.ui.enabled", sys.env.getOrElse("SPARK_SERVING_UI", "false"))
+      // A long-lived single-machine service must survive laptop sleep/hibernate: with the
+      // default 10 s heartbeat RPC timeout, a clock jump after resume makes Spark declare its
+      // own local executor dead and stop the SparkContext (observed 2026-11-07).
+      .config("spark.executor.heartbeatInterval", "300s")
+      .config("spark.network.timeout", "3600s")
+      .config("spark.rpc.askTimeout", "600s")
       .getOrCreate()
     spark.sparkContext.setLogLevel("WARN")
     val sessionSeconds = (System.nanoTime() - t0) / 1e9
@@ -149,6 +155,21 @@ object SparkInferenceServer {
     })
 
     server.start()
+    // Watchdog: if Spark ever stops underneath us, exit non-zero so the supervisor
+    // (scripts/start_local.sh, Docker restart policy) starts a fresh service instead of
+    // leaving a process that answers /health but cannot score.
+    val watchdog = new Thread(() => {
+      while (true) {
+        Thread.sleep(5000)
+        if (spark.sparkContext.isStopped) {
+          System.err.println("[spark-serving] SparkContext stopped unexpectedly; exiting for restart")
+          server.stop(0)
+          Runtime.getRuntime.halt(3)
+        }
+      }
+    })
+    watchdog.setDaemon(true)
+    watchdog.start()
     println(f"[spark-serving] listening on http://$host:$port (start-up $startedSeconds%.1fs, models: ${loaded.keys.toSeq.sorted.mkString(",")})")
     sys.addShutdownHook { server.stop(0); spark.stop() }
   }
